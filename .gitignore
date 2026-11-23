@@ -1,0 +1,8 @@
+.DS_Store
+*.qlf
+*~
+*.swp
+.vscode/
+.idea/
+# Soal resmi tidak ikut dipublikasikan.
+*.pdf
