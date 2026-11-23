@@ -1,0 +1,30 @@
+?- consult('prolog/konsol.pl').
+true.
+
+?- mulai.
+=== SISTEM PAKAR DIAGNOSA DINI PENYAKIT BLAS PADI ===
+Jawab setiap gejala dengan Y (ya) atau T (tidak).
+
+G1: Bercak belah ketupat (lonjong, ujung runcing) pada daun? (Y/T): T
+G2: Pusat bercak abu-abu atau keputihan? (Y/T): T
+G3: Tepi bercak cokelat kemerahan? (Y/T): T
+G4: Bercak menyatu sehingga daun mengering? (Y/T): T
+G5: Bibit atau anakan layu dan mati? (Y/T): T
+G6: Buku batang cokelat kehitaman? (Y/T): T
+G7: Batang mudah patah pada bagian buku? (Y/T): T
+G8: Leher malai cokelat kehitaman (busuk leher)? (Y/T): Y
+G9: Malai patah atau terkulai? (Y/T): Y
+G10: Gabah hampa atau pengisian tidak sempurna? (Y/T): Y
+G11: Lingkungan lembap, berembun, atau sering hujan? (Y/T): T
+G12: Pemupukan nitrogen (urea) berlebihan? (Y/T): T
+
+=== HASIL DIAGNOSA ===
+1. [D1] Blas leher (neck blast), tingkat berat
+   CF: 54.00%
+   Saran: kehilangan hasil tinggi; segera aplikasikan fungisida sistemik dan konsultasikan dengan PPL/POPT
+   Mengapa:
+   - R1: IF G8 AND G9 AND G10 (CF aturan 0.95, hasil 38.00%, diabaikan)
+   - R2: IF G8 AND G9 (CF aturan 0.90, hasil 54.00%, dihitung)
+   - R3: IF G8 AND G10 (CF aturan 0.80, hasil 32.00%, diabaikan)
+   - R4: IF G8 (CF aturan 0.55, hasil 44.00%, diabaikan)
+true.
