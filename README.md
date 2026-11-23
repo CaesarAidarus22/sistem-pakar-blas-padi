@@ -11,7 +11,7 @@ prolog/basis_pengetahuan.pl   fakta gejala, diagnosis, aturan, nilai CF (file ya
 prolog/mesin_inferensi.pl     backward chaining, CF, komponen bukti, prioritas diagnosis
 prolog/konsol.pl              antarmuka konsol
 prolog/server.pl              web server dan API, port 8080
-web/                          index.html, style.css, app.js (hanya tampilan)
+web/                          index.html, style.css, app.js, favicon.svg (hanya tampilan)
 tests/test_sistem.pl          unit test plunit
 docs/hasil_uji.md             tabel hasil pengujian
 docs/penjelasan_teknis.md     bahan Bab III dan IV
@@ -35,11 +35,33 @@ Jawab setiap gejala dengan `Y` atau `T` (huruf besar atau kecil). Input lain aka
 
 ### Web
 
+**Cara biasa (foreground).** Jalankan di terminal, lalu biarkan terminal tetap terbuka:
+
 ```console
 $ swipl prolog/server.pl
+Server berjalan di http://localhost:8080 (ketik halt. untuk berhenti)
+?-
 ```
 
-Buka <http://localhost:8080>. Ketik `halt.` di terminal untuk mematikan server.
+Buka <http://localhost:8080>. Untuk menghentikan server, lakukan salah satu cara berikut di terminal yang sama:
+
+- Ketik `halt.` lalu tekan Enter.
+- Tekan Ctrl+D pada prompt `?-`.
+- Tekan Ctrl+C, lalu tekan `e` saat muncul `Action (h for help) ?`.
+
+**Cara background.** Perintah foreground memerlukan terminal aktif dan langsung berhenti jika dijalankan tanpa input. Untuk menjalankannya di background, gunakan:
+
+```console
+$ nohup swipl -g 'thread_get_message(stop)' prolog/server.pl > /dev/null 2>&1 < /dev/null &
+```
+
+Hentikan server background dengan:
+
+```console
+$ lsof -ti tcp:8080 -sTCP:LISTEN | xargs kill
+```
+
+Jika muncul `Socket error: Address already in use`, port 8080 sudah dipakai. Hentikan server lama terlebih dahulu. Server foreground yang berjalan di terminal lain mungkin tidak berhenti dengan `kill` biasa. Hentikan dari terminalnya, atau gunakan `kill -9`.
 
 ### Test
 
@@ -169,3 +191,5 @@ Assertion failed: (0), function raiseStackOverflow, file pl-alloc.c, line 759.
 ```
 
 Masalah yang sama muncul pada server minimal di luar project ini. Sebagai workaround, `sajikan_web/1` di `prolog/server.pl` membuang header tersebut sebelum memanggil `http_reply_from_files/3`. Akibatnya, file statis selalu dikirim penuh dengan status 200 dan tidak memakai balasan 304. Test `refresh_if_modified_since_server_tetap_hidup` menjaga perilaku ini.
+
+**Balasan 404 pada SWI-Prolog 11.0.0 (sudah ditangani).** Opsi `not_found(404)` pada `http_reply_from_files/3` dapat menyebabkan segmentation fault. Karena itu, `sajikan_web/1` membalas 404 secara langsung dalam format JSON. Test `file_tidak_ada_404_server_tetap_hidup` menjaga perilaku ini.

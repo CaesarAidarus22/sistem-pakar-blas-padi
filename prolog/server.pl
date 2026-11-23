@@ -16,14 +16,18 @@
 :- http_handler(root(api/diagnosa), api_diagnosa, [method(post)]).
 :- http_handler(root(.), sajikan_web, [prefix]).
 
-% Workaround bug SWI-Prolog 11.0.0: request file statis dengan header
-% If-Modified-Since (dikirim browser saat refresh) menghentikan seluruh proses
-% dengan "Assertion failed: (0), function raiseStackOverflow, file pl-alloc.c,
-% line 759". Opsi cache(false) tidak mencegahnya. Header dibuang agar file
-% selalu dikirim penuh dengan status 200, dengan biaya tanpa balasan 304.
+% Workaround bug SWI-Prolog 11.0.0: balasan yang dilempar sebagai http_reply
+% dapat menghentikan seluruh proses. Request If-Modified-Since (dikirim browser
+% saat refresh) memicu "Assertion failed: (0), function raiseStackOverflow,
+% file pl-alloc.c, line 759", dan opsi cache(false) tidak mencegahnya. Opsi
+% not_found(404) juga dapat memicu segmentation fault. Karena itu, header
+% dibuang agar file dikirim penuh dengan status 200, dan 404 dibalas langsung.
 sajikan_web(Request0) :-
     exclude(header_if_modified_since, Request0, Request),
-    http_reply_from_files(web_root(.), [indexes(['index.html'])], Request).
+    (   http_reply_from_files(web_root(.), [indexes(['index.html'])], Request)
+    ->  true
+    ;   reply_json_dict(_{code: 404, message: "File tidak ditemukan"}, [status(404)])
+    ).
 
 header_if_modified_since(if_modified_since(_)).
 

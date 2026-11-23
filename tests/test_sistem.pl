@@ -275,6 +275,16 @@ test(refresh_if_modified_since_server_tetap_hidup) :-
     http_open(Url, In3, [status_code(200)]),
     close(In3).
 
+test(file_tidak_ada_404_server_tetap_hidup) :-
+    nb_getval(port_uji, Port),
+    format(atom(Hilang), 'http://localhost:~w/tidak-ada.css', [Port]),
+    http_open(Hilang, In1, [status_code(Status)]),
+    close(In1),
+    Status == 404,
+    format(atom(Ada), 'http://localhost:~w/style.css', [Port]),
+    http_open(Ada, In2, [status_code(200)]),
+    close(In2).
+
 test(input_tidak_valid_ditolak) :-
     nb_getval(port_uji, Port),
     format(atom(Url), 'http://localhost:~w/api/diagnosa', [Port]),

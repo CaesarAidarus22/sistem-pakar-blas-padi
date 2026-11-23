@@ -4,7 +4,7 @@ Metode: black-box testing per skenario dan pengujian menyeluruh atas seluruh kom
 
 Lingkungan: SWI-Prolog 11.0.0. Perintah: `swipl -g run_tests -t halt tests/test_sistem.pl`.
 
-Hasil: **39 dari 39 test lulus.**
+Hasil: **40 dari 40 test lulus.**
 
 Rumus yang diuji:
 
@@ -55,6 +55,7 @@ Kolom "diagnosis yang diharapkan" berasal dari rancangan tugas dan belum divalid
 | Derajat dan catatan keyakinan tersedia di API | Lulus |
 | Input API tidak valid ditolak dengan status 400 | Lulus |
 | Regresi refresh: request file statis dengan `If-Modified-Since` dibalas 200 dan server tetap hidup | Lulus |
+| File tidak ada dibalas 404 dan server tetap melayani request berikutnya | Lulus |
 
 ## Catatan analisis (bahan Bab 4.3)
 
