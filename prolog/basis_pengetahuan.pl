@@ -5,43 +5,32 @@
 % (tests/test_sistem.pl memeriksa keduanya tetap sama).
 
 :- encoding(utf8).
-:- discontiguous gejala/2, cf_gejala/2, menyebabkan/2, premis/2, cf_aturan/2.
+:- discontiguous menyebabkan/2, premis/2, cf_aturan/2.
 
 % ---------------------------------------------------------------------
-% GEJALA: gejala(IdGejala, Deskripsi) dan cf_gejala(IdGejala, CFPakar)
+% GEJALA: gejala(IdGejala, Deskripsi)
+% CF pakar hanya ada pada level aturan (lihat cf_aturan/2).
 % ---------------------------------------------------------------------
 
 % Daun
 gejala(g1, 'Bercak belah ketupat (lonjong, ujung runcing) pada daun').
-cf_gejala(g1, 0.8). % TODO: validasi literatur
 gejala(g2, 'Pusat bercak abu-abu atau keputihan').
-cf_gejala(g2, 0.7). % TODO: validasi literatur
 gejala(g3, 'Tepi bercak cokelat kemerahan').
-cf_gejala(g3, 0.6). % TODO: validasi literatur
 gejala(g4, 'Bercak menyatu sehingga daun mengering').
-cf_gejala(g4, 0.6). % TODO: validasi literatur
 gejala(g5, 'Bibit atau anakan layu dan mati').
-cf_gejala(g5, 0.5). % TODO: validasi literatur
 
 % Batang/Buku
 gejala(g6, 'Buku batang cokelat kehitaman').
-cf_gejala(g6, 0.7). % TODO: validasi literatur
 gejala(g7, 'Batang mudah patah pada bagian buku').
-cf_gejala(g7, 0.6). % TODO: validasi literatur
 
 % Malai
 gejala(g8, 'Leher malai cokelat kehitaman (busuk leher)').
-cf_gejala(g8, 0.8). % TODO: validasi literatur
 gejala(g9, 'Malai patah atau terkulai').
-cf_gejala(g9, 0.6). % TODO: validasi literatur
 gejala(g10, 'Gabah hampa atau pengisian tidak sempurna').
-cf_gejala(g10, 0.4). % TODO: validasi literatur (jangan dinaikkan: gejala tidak spesifik)
 
 % Lingkungan & Budidaya
 gejala(g11, 'Lingkungan lembap, berembun, atau sering hujan').
-cf_gejala(g11, 0.3). % TODO: validasi literatur
 gejala(g12, 'Pemupukan nitrogen (urea) berlebihan').
-cf_gejala(g12, 0.3). % TODO: validasi literatur
 
 % Kelompok organ untuk tampilan web.
 kelompok_organ('Daun', [g1, g2, g3, g4, g5]).
@@ -52,6 +41,9 @@ kelompok_organ('Lingkungan & Budidaya', [g11, g12]).
 % Gejala yang ditampilkan sebagai faktor risiko pendukung.
 gejala_risiko(g11).
 gejala_risiko(g12).
+
+% CF jawaban pengguna. Jawaban t membuat premis gagal.
+cf_jawaban(y, 1.0).
 
 % ---------------------------------------------------------------------
 % DIAGNOSIS: diagnosis(IdDiagnosis, 'Nama — saran tindakan')
@@ -69,6 +61,13 @@ tingkat_diagnosis(d2, 1).
 tingkat_diagnosis(d3, 1).
 tingkat_diagnosis(d4, 2).
 tingkat_diagnosis(d5, 3).
+
+% Label keparahan, terpisah dari CF (tingkat keyakinan).
+keparahan(d1, 'Berat').
+keparahan(d2, 'Sedang–Berat').
+keparahan(d3, 'Sedang').
+keparahan(d4, 'Ringan/Risiko').
+keparahan(d5, 'Rendah').
 
 % ---------------------------------------------------------------------
 % ATURAN: menyebabkan(Diagnosis, IdAturan) :- ya(Gejala), ...

@@ -70,13 +70,13 @@ diagnosa(Diagnosis, IdAturan, CFHasil) :-
     menyebabkan(Diagnosis, IdAturan),
     cf_hasil(IdAturan, CFHasil).
 
-% CF premis = min(CF pakar x 1.0); CF hasil = CF premis x CF aturan.
+% CF hasil = CF aturan x min(CF jawaban pengguna untuk semua premis).
 cf_hasil(IdAturan, CFHasil) :-
     premis(IdAturan, Premis),
-    findall(CF, (member(G, Premis), cf_gejala(G, C), CF is C * 1.0), Nilai),
+    findall(CF, (member(G, Premis), jawaban(G, J), cf_jawaban(J, CF)), Nilai),
     min_list(Nilai, CFPremis),
     cf_aturan(IdAturan, CFAturan),
-    CFHasil is CFPremis * CFAturan.
+    CFHasil is CFAturan * CFPremis.
 
 % hasil_diagnosa(-Hasil): predikat inti untuk konsol dan web.
 % Hasil = [hasil(Diagnosis, CF, Persen, Aturan), ...], terurut CF menurun lalu ID.
@@ -183,6 +183,7 @@ pisah_diagnosis(Id, Nama, Saran) :-
     sub_atom(Teks, _, Akhir, 0, Saran).
 
 pesan_tanpa_kesimpulan('Sistem tidak dapat menyimpulkan; konsultasikan dengan PPL.').
+catatan_cf('Persentase menunjukkan tingkat keyakinan sistem, bukan tingkat keparahan.').
 
 % diagnosa_jawaban(+Pasangan, -Hasil, -Faktor): untuk permintaan web.
 % Mutex menjaga jawaban/2 agar permintaan bersamaan tidak saling menimpa.

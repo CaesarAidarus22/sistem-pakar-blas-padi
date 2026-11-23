@@ -38,7 +38,9 @@ api_diagnosa(Request) :-
         ->  pesan_tanpa_kesimpulan(Pesan)
         ;   Pesan = null
         ),
-        reply_json_dict(_{diagnosis: Diagnosis, faktor_risiko: FaktorJson, pesan: Pesan})
+        catatan_cf(Catatan),
+        reply_json_dict(_{diagnosis: Diagnosis, faktor_risiko: FaktorJson,
+                          pesan: Pesan, catatan: Catatan})
     ;   reply_json_dict(_{error: "Format jawaban tidak valid. Contoh: {\"g1\":\"y\",\"g2\":\"t\"}"},
                         [status(400)])
     ).
@@ -55,10 +57,11 @@ json_gejala(G, _{id: G, label: Label, deskripsi: Deskripsi}) :-
     upcase_atom(G, Label).
 
 json_hasil(hasil(D, _, Persen, Aturan),
-           _{id: D, label: Label, nama: Nama, saran: Saran,
+           _{id: D, label: Label, nama: Nama, saran: Saran, keparahan: Keparahan,
              cf_persen: Persen, cf_teks: Teks, aturan: AturanJson}) :-
     upcase_atom(D, Label),
     pisah_diagnosis(D, Nama, Saran),
+    keparahan(D, Keparahan),
     teks_persen(Persen, Teks),
     maplist(json_aturan, Aturan, AturanJson).
 

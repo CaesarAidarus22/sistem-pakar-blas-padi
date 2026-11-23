@@ -15,16 +15,20 @@ G7: Batang mudah patah pada bagian buku? (Y/T): T
 G8: Leher malai cokelat kehitaman (busuk leher)? (Y/T): Y
 G9: Malai patah atau terkulai? (Y/T): Y
 G10: Gabah hampa atau pengisian tidak sempurna? (Y/T): Y
-G11: Lingkungan lembap, berembun, atau sering hujan? (Y/T): T
+G11: Lingkungan lembap, berembun, atau sering hujan? (Y/T): Y
 G12: Pemupukan nitrogen (urea) berlebihan? (Y/T): T
 
 === HASIL DIAGNOSA ===
 1. [D1] Blas leher (neck blast), tingkat berat
-   CF: 54.00%
+   Keparahan: Berat
+   CF (keyakinan): 95.00%
    Saran: kehilangan hasil tinggi; segera aplikasikan fungisida sistemik dan konsultasikan dengan PPL/POPT
    Mengapa:
-   - R1: IF G8 AND G9 AND G10 (CF aturan 0.95, hasil 38.00%, diabaikan)
-   - R2: IF G8 AND G9 (CF aturan 0.90, hasil 54.00%, dihitung)
-   - R3: IF G8 AND G10 (CF aturan 0.80, hasil 32.00%, diabaikan)
-   - R4: IF G8 (CF aturan 0.55, hasil 44.00%, diabaikan)
+   - R1: IF G8 AND G9 AND G10 (CF aturan 0.95, hasil 95.00%, dihitung)
+   - R2: IF G8 AND G9 (CF aturan 0.90, hasil 90.00%, diabaikan)
+   - R3: IF G8 AND G10 (CF aturan 0.80, hasil 80.00%, diabaikan)
+   - R4: IF G8 (CF aturan 0.55, hasil 55.00%, diabaikan)
+Faktor risiko pendukung:
+   - G11: Lingkungan lembap, berembun, atau sering hujan
+Catatan: Persentase menunjukkan tingkat keyakinan sistem, bukan tingkat keparahan.
 true.

@@ -44,19 +44,23 @@ test(premis_sama_dengan_badan_aturan) :-
 
 :- begin_tests(skenario).
 
-test(a_blas_leher) :- ringkas([g8, g9, g10], [d1-'54.00%']).
-test(b_blas_daun_tanpa_d4) :- ringkas([g1, g2, g3, g4], [d2-'57.00%']).
-test(c_blas_buku) :- ringkas([g6, g7], [d3-'54.00%']).
-test(d_lingkungan) :- ringkas([g11, g12], [d4-'15.00%']).
+test(a_blas_leher) :- ringkas([g8, g9, g10], [d1-'95.00%']).
+test(b_blas_daun_tanpa_d4) :- ringkas([g1, g2, g3, g4], [d2-'95.00%']).
+test(c_blas_buku) :- ringkas([g6, g7], [d3-'90.00%']).
+test(d_lingkungan) :- ringkas([g11, g12], [d4-'50.00%']).
 test(e_tanpa_gejala) :- uji([], [], []).
-test(f_campuran_urut_cf) :- ringkas([g1, g2, g3, g4, g8, g9, g10], [d2-'57.00%', d1-'54.00%']).
-test(g_gejala_minim) :- ringkas([g9], [d5-'24.00%']).
+test(f_campuran_urut_cf) :- ringkas([g1, g2, g3, g4, g8, g9, g10], [d1-'95.00%', d2-'95.00%']).
+test(g_gejala_minim) :- ringkas([g9], [d5-'40.00%']).
 
 test(faktor_risiko_di_bawah_diagnosis_utama) :-
     uji([g8, g11, g12], [hasil(d1, _, _, _)], [g11, g12]).
 
 test(faktor_risiko_tidak_muncul_pada_d4) :-
     uji([g11, g12], [hasil(d4, _, _, _)], []).
+
+test(keparahan_terpisah_dari_cf) :-
+    findall(D-K, keparahan(D, K), [d1-'Berat', d2-'Sedang–Berat', d3-'Sedang',
+                                   d4-'Ringan/Risiko', d5-'Rendah']).
 
 test(seri_urut_id) :-
     Hasil = [hasil(d2, 0.5, 50.0, []), hasil(d1, 0.5, 50.0, [])],
@@ -75,7 +79,7 @@ test(cf_d1_tidak_turun) :-
 
 test(hanya_cf_tertinggi_per_rantai) :-
     uji([g8, g9, g10], [hasil(d1, _, _, Aturan)], _),
-    findall(R, member(aturan(R, _, _, _, dihitung), Aturan), [r2]).
+    findall(R, member(aturan(R, _, _, _, dihitung), Aturan), [r1]).
 
 test(seri_pilih_yang_lebih_spesifik) :-
     A = a(r_umum, [g1], 0.5),
@@ -86,7 +90,7 @@ test(irisan_sebagian_tetap_digabung) :-
     uji([g1, g4, g5], [hasil(d2, CF, _, Aturan)], _),
     findall(R, member(aturan(R, _, _, _, dihitung), Aturan), Rs),
     msort(Rs, [r7, r8]),
-    abs(CF - 0.67) < 1.0e-9.
+    abs(CF - 0.95) < 1.0e-9.
 
 :- end_tests(subsumption).
 
@@ -140,6 +144,15 @@ test(d5_tidak_bersama_d1_d4) :-
     forall(member(V, Vs),
            \+ ( memberchk(d5-_, V), member(D-_, V), memberchk(D, [d1, d2, d3, d4]) )).
 
+test(tidak_ada_aturan_mati) :-
+    semua_gejala(Gs),
+    findall(R, ( between(0, 4095, M), gejala_mask(M, Gs, T), uji(T, H, _),
+                 member(hasil(_, _, _, A), H),
+                 member(aturan(R, _, _, _, dihitung), A) ), Rs),
+    sort(Rs, Dihitung),
+    findall(R, premis(R, _), Semua),
+    sort(Semua, Dihitung).
+
 :- end_tests(brute_force).
 
 :- begin_tests(konsistensi_web, [setup(nyalakan(Port)), cleanup(http_stop_server(Port, []))]).
@@ -155,6 +168,15 @@ test(skenario_a_g_sama_dengan_api) :-
              findall(D-T, ( member(X, Balas.diagnosis),
                             atom_string(D, X.id),
                             atom_string(T, X.cf_teks) ), Harap) )).
+
+test(keparahan_dan_catatan_di_api) :-
+    nb_getval(port_uji, Port),
+    format(atom(Url), 'http://localhost:~w/api/diagnosa', [Port]),
+    http_post(Url, json(_{g8: "y"}), Balas, [json_object(dict)]),
+    [X] = Balas.diagnosis,
+    X.keparahan == "Berat",
+    catatan_cf(C),
+    atom_string(C, Balas.catatan).
 
 test(input_tidak_valid_ditolak) :-
     nb_getval(port_uji, Port),

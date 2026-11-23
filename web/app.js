@@ -79,13 +79,15 @@ function kartuDiagnosis(d, utama) {
   const kartu = el("article", utama ? "kartu utama" : "kartu");
   const judul = el("div", "judul-hasil");
   judul.append(el(utama ? "h2" : "h3", "", `${d.label}: ${d.nama}`), el("span", "angka", d.cf_teks));
+  const meta = el("p", "meta");
+  meta.append(el("span", "keparahan", `Keparahan: ${d.keparahan}`), el("span", "", `Keyakinan sistem: ${d.cf_teks}`));
   const bar = el("progress");
   bar.max = 100;
   bar.value = d.cf_persen;
   bar.setAttribute("aria-label", `Tingkat keyakinan ${d.cf_teks}`);
   const saran = el("p");
   saran.append(el("strong", "", "Saran tindakan: "), d.saran);
-  kartu.append(judul, bar, saran, kartuAturan(d.aturan));
+  kartu.append(judul, meta, bar, saran, kartuAturan(d.aturan));
   return kartu;
 }
 
@@ -107,7 +109,7 @@ function tampilkanHasil(data) {
   if (lain.length) {
     isi.push(el("h2", "", "Diagnosis lain"), ...lain.map((d) => kartuDiagnosis(d, false)));
   }
-  isi.push(el("p", "note", "Nilai CF masih draf. Konfirmasi hasil dengan PPL/POPT."));
+  isi.push(el("p", "note", `${data.catatan} Nilai CF masih draf. Konfirmasi hasil dengan PPL/POPT.`));
   wadah.replaceChildren(...isi);
 }
 

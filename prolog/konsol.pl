@@ -31,14 +31,17 @@ tampilkan_hasil([], _) :-
     writeln(Pesan).
 tampilkan_hasil([H|T], Faktor) :-
     forall(nth1(No, [H|T], Item), tampilkan_diagnosis(No, Item)),
-    tampilkan_faktor(Faktor).
+    tampilkan_faktor(Faktor),
+    catatan_cf(Catatan),
+    format('Catatan: ~w~n', [Catatan]).
 
 tampilkan_diagnosis(No, hasil(D, _, Persen, Aturan)) :-
     pisah_diagnosis(D, Nama, Saran),
+    keparahan(D, Keparahan),
     teks_persen(Persen, Teks),
     upcase_atom(D, Label),
-    format('~w. [~w] ~w~n   CF: ~s~n   Saran: ~w~n   Mengapa:~n',
-           [No, Label, Nama, Teks, Saran]),
+    format('~w. [~w] ~w~n   Keparahan: ~w~n   CF (keyakinan): ~s~n   Saran: ~w~n   Mengapa:~n',
+           [No, Label, Nama, Keparahan, Teks, Saran]),
     forall(member(A, Aturan), tampilkan_aturan(A)).
 
 tampilkan_aturan(aturan(R, Premis, CFAturan, CFHasil, Status)) :-

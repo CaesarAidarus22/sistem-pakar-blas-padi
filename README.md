@@ -50,30 +50,30 @@ $ swipl -g run_tests -t halt tests/test_sistem.pl
 
 ### Gejala
 
-| ID | Organ | Gejala | CF pakar (draf) |
-|---|---|---|---:|
-| G1 | Daun | Bercak belah ketupat (lonjong, ujung runcing) pada daun | 0.8 |
-| G2 | Daun | Pusat bercak abu-abu atau keputihan | 0.7 |
-| G3 | Daun | Tepi bercak cokelat kemerahan | 0.6 |
-| G4 | Daun | Bercak menyatu sehingga daun mengering | 0.6 |
-| G5 | Daun | Bibit atau anakan layu dan mati | 0.5 |
-| G6 | Batang/Buku | Buku batang cokelat kehitaman | 0.7 |
-| G7 | Batang/Buku | Batang mudah patah pada bagian buku | 0.6 |
-| G8 | Malai | Leher malai cokelat kehitaman (busuk leher) | 0.8 |
-| G9 | Malai | Malai patah atau terkulai | 0.6 |
-| G10 | Malai | Gabah hampa atau pengisian tidak sempurna | 0.4 |
-| G11 | Lingkungan & Budidaya | Lingkungan lembap, berembun, atau sering hujan | 0.3 |
-| G12 | Lingkungan & Budidaya | Pemupukan nitrogen (urea) berlebihan | 0.3 |
+| ID | Organ | Gejala |
+|---|---|---|
+| G1 | Daun | Bercak belah ketupat (lonjong, ujung runcing) pada daun |
+| G2 | Daun | Pusat bercak abu-abu atau keputihan |
+| G3 | Daun | Tepi bercak cokelat kemerahan |
+| G4 | Daun | Bercak menyatu sehingga daun mengering |
+| G5 | Daun | Bibit atau anakan layu dan mati |
+| G6 | Batang/Buku | Buku batang cokelat kehitaman |
+| G7 | Batang/Buku | Batang mudah patah pada bagian buku |
+| G8 | Malai | Leher malai cokelat kehitaman (busuk leher) |
+| G9 | Malai | Malai patah atau terkulai |
+| G10 | Malai | Gabah hampa atau pengisian tidak sempurna |
+| G11 | Lingkungan & Budidaya | Lingkungan lembap, berembun, atau sering hujan |
+| G12 | Lingkungan & Budidaya | Pemupukan nitrogen (urea) berlebihan |
 
 ### Diagnosis
 
-| ID | Diagnosis | Saran tindakan |
-|---|---|---|
-| D1 | Blas leher (neck blast), tingkat berat | Kehilangan hasil tinggi; segera aplikasikan fungisida sistemik dan konsultasikan dengan PPL/POPT |
-| D2 | Blas daun (leaf blast), tingkat sedang–berat | Kurangi pupuk N, aplikasikan fungisida, perbaiki jarak tanam |
-| D3 | Blas buku (node blast) | Aplikasikan fungisida dan pantau penyebaran ke malai |
-| D4 | Gejala awal blas / risiko tinggi | Pemantauan rutin, perbaiki drainase, gunakan varietas tahan |
-| D5 | Kemungkinan rendah blas | Gejala tidak cukup kuat, kemungkinan penyakit lain; konsultasikan dengan PPL |
+| ID | Diagnosis | Keparahan | Saran tindakan |
+|---|---|---|---|
+| D1 | Blas leher (neck blast), tingkat berat | Berat | Kehilangan hasil tinggi; segera aplikasikan fungisida sistemik dan konsultasikan dengan PPL/POPT |
+| D2 | Blas daun (leaf blast), tingkat sedang–berat | Sedang–Berat | Kurangi pupuk N, aplikasikan fungisida, perbaiki jarak tanam |
+| D3 | Blas buku (node blast) | Sedang | Aplikasikan fungisida dan pantau penyebaran ke malai |
+| D4 | Gejala awal blas / risiko tinggi | Ringan/Risiko | Pemantauan rutin, perbaiki drainase, gunakan varietas tahan |
+| D5 | Kemungkinan rendah blas | Rendah | Gejala tidak cukup kuat, kemungkinan penyakit lain; konsultasikan dengan PPL |
 
 ### Aturan
 
@@ -104,10 +104,13 @@ $ swipl -g run_tests -t halt tests/test_sistem.pl
 ## Perhitungan CF
 
 ```text
-CF premis = min(CF pakar semua gejala di premis) × 1.0
-CF hasil  = CF premis × CF aturan
-CFgab     = CF1 + CF2 × (1 − CF1)
+CF hasil = CF aturan × min(CF jawaban pengguna untuk semua premis), dengan Y = 1.0
+CFgab    = CF1 + CF2 × (1 − CF1)
 ```
+
+**CF hanya ada pada level aturan.** Kolom CF gejala pada template bersifat opsional ("Jika Ada"). CF gejala tidak dipakai karena sebelumnya membuat bobot pakar dihitung ganda, di gejala dan di aturan, sehingga aturan yang lebih spesifik kalah.
+
+**Keyakinan berbeda dari keparahan.** Persentase menunjukkan tingkat keyakinan sistem, bukan tingkat keparahan. Keparahan ditampilkan sebagai label terpisah pada setiap diagnosis.
 
 **Subsumption (CF maksimum per rantai).** Rumus kombinasi mengasumsikan bukti antar-aturan independen. Karena itu, jika premis satu aturan adalah subset dari premis aturan lain dengan kesimpulan sama, hanya aturan dengan CF hasil lebih tinggi yang dihitung. Jika seri, aturan yang lebih spesifik dipilih. Semua pasangan dibandingkan dari himpunan aturan terpicu, sehingga hasil tidak bergantung pada urutan aturan.
 
@@ -120,20 +123,20 @@ CFgab     = CF1 + CF2 × (1 − CF1)
 
 ## Pengujian
 
-| Skenario | Input | Hasil sistem |
-|---|---|---|
-| A | G8, G9, G10 | D1 54.00% |
-| B | G1, G2, G3, G4 | D2 57.00% |
-| C | G6, G7 | D3 54.00% |
-| D | G11, G12 | D4 15.00% |
-| E | tanpa gejala | tidak dapat menyimpulkan |
-| F | G1, G2, G3, G4, G8, G9, G10 | D2 57.00%, D1 54.00% |
-| G | G9 | D5 24.00% |
+| Skenario | Input | Hasil sistem | Aturan dihitung |
+|---|---|---|---|
+| A | G8, G9, G10 | D1 95.00% | R1 |
+| B | G1, G2, G3, G4 | D2 95.00% | R5 |
+| C | G6, G7 | D3 90.00% | R9 |
+| D | G11, G12 | D4 50.00% | R11 |
+| E | tanpa gejala | tidak dapat menyimpulkan | – |
+| F | G1, G2, G3, G4, G8, G9, G10 | D1 95.00%, D2 95.00% (seri, urut ID) | R1; R5 |
+| G | G9 | D5 40.00% | R19 |
 
 Rincian ada di [docs/hasil_uji.md](docs/hasil_uji.md). Penjelasan mekanisme ada di [docs/penjelasan_teknis.md](docs/penjelasan_teknis.md).
 
 ## Batasan
 
 - Nilai CF masih draf dan daftar pustaka belum diisi.
-- Dengan CF G10 = 0.4, aturan R1, R3, dan R21 terpicu tetapi tidak pernah dihitung. G10 karena itu tidak menaikkan CF D1.
+- Jawaban hanya Y atau T, sehingga CF hasil aturan yang terpicu sama dengan CF aturan.
 - Aturan yang premisnya hanya beririsan sebagian tetap digabung, sehingga gejala yang sama masih dapat berkontribusi dua kali.
