@@ -10,6 +10,7 @@ Dokumen ini dapat diadaptasi untuk Bab III dan Bab IV laporan.
 │ gejala/2, diagnosis/2        │
 │ menyebabkan/2, premis/2      │
 │ cf_aturan/2, derajat_aturan/2│
+│ saran/3                      │
 └──────────────┬───────────────┘
                │
                ▼
@@ -160,6 +161,12 @@ Contoh G1, G2, G3, G5 pada D2:
 
 Output menampilkan "Derajat: Berat (berdasarkan aturan R7)" dan "Keyakinan dari R6, derajat dari R7". Konsol dan web juga menampilkan kalimat "Persentase menunjukkan tingkat keyakinan sistem, bukan tingkat keparahan."
 
+### Saran mengikuti derajat
+
+`diagnosis/2` hanya menyimpan nama penyakit. Saran disimpan pada `saran(Diagnosis, Derajat, Teks)`, dan `saran_hasil/2` memilih teks berdasarkan derajat hasil diagnosis.
+
+Contoh: G8 saja menghasilkan D1 berderajat Awal, sehingga saran berfokus pada pemantauan dan pencegahan. G8, G9, G10 menghasilkan D1 berderajat Berat, sehingga saran berisi tindakan pengendalian segera. Pengujian brute force memastikan setiap diagnosis yang tampil pada 4.096 kombinasi memiliki saran untuk derajatnya.
+
 ## 8. Urutan diagnosis
 
 Diagnosis diurutkan dari CF tertinggi. Jika CF seri, derajat lebih berat tampil lebih dulu, lalu ID diagnosis. Contoh: G1, G5, G8, G10 menghasilkan D2 dan D1 sama-sama 80%. D2 tampil lebih dulu karena berderajat Berat, sedangkan D1 berderajat Sedang.
@@ -169,7 +176,8 @@ Diagnosis diurutkan dari CF tertinggi. Jika CF seri, derajat lebih berat tampil 
 - Nilai CF masih draf dan belum tervalidasi literatur atau pakar.
 - Komponen hanya memakai CF tertinggi, sehingga gejala tambahan dalam komponen yang sama belum tentu menaikkan CF. Contoh: G1, G4, G5 tetap 80%.
 - Jawaban hanya Y atau T, sehingga CF hasil aturan yang terpicu sama dengan CF aturan.
-- Label derajat masih draf dan perlu divalidasi dengan literatur atau pakar.
+- Label derajat dan teks saran masih draf dan perlu divalidasi dengan literatur atau pakar.
+- Pada SWI-Prolog 11.0.0, request `If-Modified-Since` ke file statis membuat server berhenti, termasuk pada server minimal di luar project ini.
 - Urutan diagnosis mengutamakan CF. Derajat hanya menjadi penentu saat CF seri.
 - Sistem hanya mencakup blas padi dan tidak membedakan penyakit lain dengan gejala serupa.
 - Pengujian membuktikan konsistensi logika, bukan akurasi diagnosis di lapangan.

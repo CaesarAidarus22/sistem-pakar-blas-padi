@@ -3,13 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#17512f">
   <title>Sistem Pakar Blas Padi</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
+  <header class="kepala">
     <div class="wrap bar">
-      <a class="brand" href="#diagnosis">Sistem Pakar Blas Padi</a>
+      <a class="brand" href="#diagnosis">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 30V11" /><path d="M16 12c-4-1-6-4-6-8 4 1 6 4 6 8Z" /><path d="M16 12c4-1 6-4 6-8-4 1-6 4-6 8Z" /><path d="M16 20c-5-1-8-4-8-8 5 1 8 4 8 8Z" /><path d="M16 20c5-1 8-4 8-8-5 1-8 4-8 8Z" /></svg>
+        <span>Sistem Pakar Blas Padi</span>
+      </a>
       <nav aria-label="Navigasi utama">
         <a href="#diagnosis">Diagnosis</a>
         <a href="#hasil">Hasil</a>
@@ -20,41 +24,66 @@
 
   <main class="wrap">
     <section id="diagnosis" class="page">
-      <h1>Diagnosa dini penyakit blas</h1>
-      <p class="lead">Pilih Ya untuk setiap gejala yang terlihat di lahan, lalu tekan Diagnosa.</p>
+      <div class="hero">
+        <p class="eyebrow">Backward Chaining + Certainty Factor</p>
+        <h1>Diagnosa dini penyakit blas padi</h1>
+        <p>Tandai gejala yang terlihat di lahan untuk memperkirakan jenis dan derajat penyakit blas (<em>Pyricularia oryzae</em>).</p>
+      </div>
+
       <form id="form-gejala">
-        <div id="daftar-gejala"><p>Memuat gejala…</p></div>
+        <div id="daftar-gejala" class="organ-grid"><p class="kartu">Memuat gejala…</p></div>
         <p id="galat" class="error" role="alert" hidden></p>
-        <div class="actions">
-          <button type="submit" class="primary">Diagnosa</button>
-          <button type="reset">Reset</button>
+        <div class="bilah-aksi">
+          <div class="status-pilihan">
+            <strong id="penghitung" aria-live="polite">0 gejala dipilih</strong>
+            <span id="petunjuk">Pilih minimal satu gejala untuk memulai diagnosis.</span>
+          </div>
+          <div class="tombol-grup">
+            <button type="reset" class="tombol">Reset</button>
+            <button type="submit" class="tombol utama" aria-describedby="petunjuk" disabled>Diagnosa</button>
+          </div>
         </div>
       </form>
     </section>
 
-    <section id="hasil" class="page" aria-live="polite">
-      <h1>Hasil diagnosis</h1>
-      <div id="isi-hasil"><p>Belum ada hasil. Isi gejala di halaman <a href="#diagnosis">Diagnosis</a>.</p></div>
+    <section id="hasil" class="page">
+      <div class="judul-halaman">
+        <h1 id="judul-hasil" tabindex="-1">Hasil diagnosis</h1>
+        <div id="aksi-hasil" class="tombol-grup" hidden>
+          <button type="button" id="tombol-ulang" class="tombol">Diagnosa ulang</button>
+          <button type="button" id="tombol-cetak" class="tombol utama">Cetak / Simpan PDF</button>
+        </div>
+      </div>
+      <div id="isi-hasil"><p class="kartu">Belum ada hasil. Isi gejala di halaman <a href="#diagnosis">Diagnosis</a>.</p></div>
     </section>
 
     <section id="tentang" class="page">
-      <h1>Tentang sistem</h1>
-      <h2>Penyakit blas</h2>
-      <p>Blas adalah penyakit padi yang disebabkan jamur <em>Pyricularia oryzae</em>. Sistem ini membedakan gejala pada daun, buku batang, dan leher malai.</p>
-      <h2>Metode</h2>
-      <p><strong>Backward chaining</strong> menguji setiap kemungkinan diagnosis melalui aturan <code>menyebabkan/2</code>. Prolog memakai backtracking untuk mencoba aturan alternatif.</p>
-      <p><strong>Certainty Factor</strong> menyatakan tingkat keyakinan. CF hanya ada pada level aturan: CF hasil adalah CF aturan dikali nilai minimum CF jawaban pengguna (Ya = 1.0). Persentase menunjukkan tingkat keyakinan sistem, bukan tingkat keparahan. Aturan yang berbagi gejala bukan bukti independen, sehingga hanya CF tertingginya yang dipakai. Kelompok aturan yang gejalanya saling lepas digabung dengan <code>CF1 + CF2 × (1 − CF1)</code>.</p>
-      <p class="note">Nilai CF masih draf dan perlu divalidasi dengan literatur atau pakar. Hasil sistem bukan pengganti pemeriksaan PPL/POPT.</p>
-      <h2>Daftar pustaka</h2>
-      <ol>
-        <li>[PERLU DIISI KELOMPOK]</li>
-        <li>[PERLU DIISI KELOMPOK]</li>
-        <li>[PERLU DIISI KELOMPOK]</li>
-      </ol>
+      <div class="judul-halaman"><h1>Tentang sistem</h1></div>
+      <div class="prosa">
+        <article class="kartu">
+          <h2>Penyakit blas</h2>
+          <p>Blas adalah penyakit padi yang disebabkan jamur <em>Pyricularia oryzae</em>. Sistem ini membedakan gejala pada daun, buku batang, dan leher malai.</p>
+        </article>
+        <article class="kartu">
+          <h2>Metode</h2>
+          <p><strong>Backward chaining</strong> menguji setiap kemungkinan diagnosis melalui aturan <code>menyebabkan/2</code>. Prolog memakai backtracking untuk mencoba aturan alternatif.</p>
+          <p><strong>Certainty Factor</strong> menyatakan tingkat keyakinan. CF hanya ada pada level aturan: CF hasil adalah CF aturan dikali nilai minimum CF jawaban pengguna (Ya = 1.0). Aturan yang berbagi gejala bukan bukti independen, sehingga hanya CF tertingginya yang dipakai. Kelompok aturan yang gejalanya saling lepas digabung dengan <code>CF1 + CF2 × (1 − CF1)</code>.</p>
+          <p><strong>Derajat</strong> menyatakan keparahan dan diambil dari aturan terpicu yang paling berat. Saran tindakan mengikuti derajat tersebut. Persentase menunjukkan tingkat keyakinan sistem, bukan tingkat keparahan.</p>
+          <p class="note">Nilai CF, derajat, dan saran masih draf dan perlu divalidasi dengan literatur atau pakar. Hasil sistem bukan pengganti pemeriksaan PPL/POPT.</p>
+        </article>
+        <article class="kartu">
+          <h2>Daftar pustaka</h2>
+          <ol>
+            <li>[PERLU DIISI KELOMPOK]</li>
+            <li>[PERLU DIISI KELOMPOK]</li>
+            <li>[PERLU DIISI KELOMPOK]</li>
+          </ol>
+        </article>
+      </div>
     </section>
   </main>
 
-  <footer class="wrap">Tugas 2 Kecerdasan Artifisial (MMAI1001)</footer>
+  <footer class="wrap kaki">Tugas 2 Kecerdasan Artifisial (MMAI1001)</footer>
   <script src="app.js"></script>
 </body>
 </html>

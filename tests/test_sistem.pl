@@ -77,8 +77,22 @@ test(sumber_sama_tidak_ditampilkan_ulang) :-
     teks_derajat(H, 'Derajat: Berat (berdasarkan aturan R1)', '').
 
 test(nama_diagnosis_tanpa_tingkat) :-
-    pisah_diagnosis(d1, 'Blas leher (neck blast)', _),
-    pisah_diagnosis(d2, 'Blas daun (leaf blast)', _).
+    diagnosis(d1, 'Blas leher (neck blast)'),
+    diagnosis(d2, 'Blas daun (leaf blast)').
+
+test(g8_saja_memakai_saran_awal) :-
+    uji([g8], [H], _),
+    derajat_hasil(H, 'Awal', r4),
+    saran(d1, 'Awal', SaranAwal),
+    saran(d1, 'Berat', SaranBerat),
+    saran_hasil(H, Saran),
+    Saran == SaranAwal,
+    Saran \== SaranBerat.
+
+test(skenario_a_memakai_saran_berat) :-
+    uji([g8, g9, g10], [H], _),
+    saran(d1, 'Berat', Saran),
+    saran_hasil(H, Saran).
 
 test(setiap_aturan_punya_derajat) :-
     forall(premis(R, _), ( derajat_aturan(R, L), urutan_derajat(L, _) )).
@@ -194,6 +208,14 @@ test(derajat_tidak_turun_saat_gejala_ditambah) :-
                      get_assoc(M, Tabel, A), get_assoc(M2, Tabel, B),
                      member(D-U1, A), memberchk(D-U2, B), U2 > U1 ), []).
 
+test(setiap_hasil_punya_saran_sesuai_derajat) :-
+    semua_gejala(Gs),
+    forall(( between(0, 4095, M), gejala_mask(M, Gs, T), uji(T, H, _), member(X, H) ),
+           ( X = hasil(D, _, _, _),
+             derajat_hasil(X, L, _),
+             saran(D, L, Teks),
+             saran_hasil(X, Teks) )).
+
 test(tidak_ada_aturan_mati) :-
     semua_gejala(Gs),
     findall(R, ( between(0, 4095, M), gejala_mask(M, Gs, T), uji(T, H, _),
@@ -226,6 +248,8 @@ test(derajat_dan_catatan_di_api) :-
     [X] = Balas.diagnosis,
     X.derajat == "Awal",
     X.derajat_aturan == "R4",
+    saran(d1, 'Awal', SaranAwal),
+    atom_string(SaranAwal, X.saran),
     catatan_cf(C),
     atom_string(C, Balas.catatan).
 

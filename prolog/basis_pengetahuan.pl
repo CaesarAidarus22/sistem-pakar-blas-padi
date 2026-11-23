@@ -46,14 +46,38 @@ gejala_risiko(g12).
 cf_jawaban(y, 1.0).
 
 % ---------------------------------------------------------------------
-% DIAGNOSIS: diagnosis(IdDiagnosis, 'Nama — saran tindakan')
+% DIAGNOSIS: diagnosis(IdDiagnosis, NamaPenyakit)
 % ---------------------------------------------------------------------
 
-diagnosis(d1, 'Blas leher (neck blast) — kehilangan hasil tinggi; segera aplikasikan fungisida sistemik dan konsultasikan dengan PPL/POPT').
-diagnosis(d2, 'Blas daun (leaf blast) — kurangi pupuk N, aplikasikan fungisida, perbaiki jarak tanam').
-diagnosis(d3, 'Blas buku (node blast) — aplikasikan fungisida dan pantau penyebaran ke malai').
-diagnosis(d4, 'Gejala awal blas / risiko tinggi — pemantauan rutin, perbaiki drainase, gunakan varietas tahan').
-diagnosis(d5, 'Kemungkinan rendah blas — gejala tidak cukup kuat, kemungkinan penyakit lain; konsultasikan dengan PPL').
+diagnosis(d1, 'Blas leher (neck blast)').
+diagnosis(d2, 'Blas daun (leaf blast)').
+diagnosis(d3, 'Blas buku (node blast)').
+diagnosis(d4, 'Gejala awal blas / risiko tinggi').
+diagnosis(d5, 'Kemungkinan rendah blas').
+
+% ---------------------------------------------------------------------
+% SARAN: saran(IdDiagnosis, Derajat, Teks)
+% Saran yang tampil mengikuti derajat hasil diagnosis.
+% ---------------------------------------------------------------------
+
+% TODO: validasi literatur
+saran(d1, 'Berat', 'Kehilangan hasil berpotensi tinggi. Segera aplikasikan fungisida sistemik sesuai anjuran label dan konsultasikan dengan PPL/POPT.').
+% TODO: validasi literatur
+saran(d1, 'Sedang', 'Pengisian gabah mulai terganggu. Periksa leher malai pada rumpun sekitar dan konsultasikan kebutuhan fungisida dengan PPL/POPT.').
+% TODO: validasi literatur
+saran(d1, 'Awal', 'Gejala masih awal. Pantau leher malai secara rutin, hindari pupuk N berlebih, jaga drainase, dan hubungi PPL/POPT jika malai mulai patah atau gabah hampa.').
+% TODO: validasi literatur
+saran(d2, 'Berat', 'Segera aplikasikan fungisida sesuai anjuran label, kurangi pupuk N, perbaiki jarak tanam, dan konsultasikan dengan PPL/POPT.').
+% TODO: validasi literatur
+saran(d2, 'Sedang', 'Kurangi pupuk N, perbaiki jarak tanam, pantau penyebaran bercak, dan konsultasikan kebutuhan fungisida dengan PPL/POPT.').
+% TODO: validasi literatur
+saran(d3, 'Sedang–Berat', 'Aplikasikan fungisida sesuai anjuran label, pantau penyebaran ke malai, dan konsultasikan dengan PPL/POPT.').
+% TODO: validasi literatur
+saran(d3, 'Awal', 'Gejala masih awal. Pantau buku batang dan penyebaran ke malai, hindari pupuk N berlebih, dan jaga drainase.').
+% TODO: validasi literatur
+saran(d4, 'Risiko', 'Lakukan pemantauan rutin, perbaiki drainase, dan gunakan varietas tahan.').
+% TODO: validasi literatur
+saran(d5, 'Rendah', 'Gejala tidak cukup kuat dan mungkin disebabkan penyakit lain. Konsultasikan dengan PPL.').
 
 % Tingkat prioritas tampil: hanya tingkat terkecil yang terpicu ditampilkan.
 tingkat_diagnosis(d1, 1).

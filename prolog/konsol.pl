@@ -37,7 +37,8 @@ tampilkan_hasil([H|T], Faktor) :-
 
 tampilkan_diagnosis(No, Item) :-
     Item = hasil(D, _, Persen, Aturan),
-    pisah_diagnosis(D, Nama, Saran),
+    diagnosis(D, Nama),
+    saran_hasil(Item, Saran),
     teks_derajat(Item, Derajat, Sumber),
     teks_persen(Persen, Teks),
     upcase_atom(D, Label),

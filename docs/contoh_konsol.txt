@@ -23,7 +23,7 @@ G12: Pemupukan nitrogen (urea) berlebihan? (Y/T): T
 1. [D1] Blas leher (neck blast)
    Derajat: Berat (berdasarkan aturan R1)
    CF (keyakinan): 95.00%
-   Saran: kehilangan hasil tinggi; segera aplikasikan fungisida sistemik dan konsultasikan dengan PPL/POPT
+   Saran: Kehilangan hasil berpotensi tinggi. Segera aplikasikan fungisida sistemik sesuai anjuran label dan konsultasikan dengan PPL/POPT.
    Mengapa:
    - R1: IF G8 AND G9 AND G10 (CF aturan 0.95, hasil 95.00%, dihitung)
    - R2: IF G8 AND G9 (CF aturan 0.90, hasil 90.00%, diabaikan)
@@ -60,9 +60,40 @@ G12: Pemupukan nitrogen (urea) berlebihan? (Y/T): T
    Derajat: Berat (berdasarkan aturan R7)
    Keyakinan dari R6, derajat dari R7
    CF (keyakinan): 90.00%
-   Saran: kurangi pupuk N, aplikasikan fungisida, perbaiki jarak tanam
+   Saran: Segera aplikasikan fungisida sesuai anjuran label, kurangi pupuk N, perbaiki jarak tanam, dan konsultasikan dengan PPL/POPT.
    Mengapa:
    - R6: IF G1 AND G2 AND G3 (CF aturan 0.90, hasil 90.00%, dihitung)
    - R7: IF G1 AND G5 (CF aturan 0.80, hasil 80.00%, diabaikan)
+Catatan: Persentase menunjukkan tingkat keyakinan sistem, bukan tingkat keparahan.
+true.
+
+% Contoh 3: G8 saja = Y (saran derajat Awal)
+?- consult('prolog/konsol.pl').
+true.
+
+?- mulai.
+=== SISTEM PAKAR DIAGNOSA DINI PENYAKIT BLAS PADI ===
+Jawab setiap gejala dengan Y (ya) atau T (tidak).
+
+G1: Bercak belah ketupat (lonjong, ujung runcing) pada daun? (Y/T): T
+G2: Pusat bercak abu-abu atau keputihan? (Y/T): T
+G3: Tepi bercak cokelat kemerahan? (Y/T): T
+G4: Bercak menyatu sehingga daun mengering? (Y/T): T
+G5: Bibit atau anakan layu dan mati? (Y/T): T
+G6: Buku batang cokelat kehitaman? (Y/T): T
+G7: Batang mudah patah pada bagian buku? (Y/T): T
+G8: Leher malai cokelat kehitaman (busuk leher)? (Y/T): Y
+G9: Malai patah atau terkulai? (Y/T): T
+G10: Gabah hampa atau pengisian tidak sempurna? (Y/T): T
+G11: Lingkungan lembap, berembun, atau sering hujan? (Y/T): T
+G12: Pemupukan nitrogen (urea) berlebihan? (Y/T): T
+
+=== HASIL DIAGNOSA ===
+1. [D1] Blas leher (neck blast)
+   Derajat: Awal (berdasarkan aturan R4)
+   CF (keyakinan): 55.00%
+   Saran: Gejala masih awal. Pantau leher malai secara rutin, hindari pupuk N berlebih, jaga drainase, dan hubungi PPL/POPT jika malai mulai patah atau gabah hampa.
+   Mengapa:
+   - R4: IF G8 (CF aturan 0.55, hasil 55.00%, dihitung)
 Catatan: Persentase menunjukkan tingkat keyakinan sistem, bukan tingkat keparahan.
 true.

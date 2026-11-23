@@ -207,13 +207,11 @@ persen(CF, Persen) :-
 teks_persen(Persen, Teks) :-
     format(string(Teks), '~2f%', [Persen]).
 
-% pisah_diagnosis(+Id, -Nama, -Saran): pisahkan teks diagnosis/2 pada ' — '.
-pisah_diagnosis(Id, Nama, Saran) :-
-    diagnosis(Id, Teks),
-    sub_atom(Teks, Awal, _, Akhir, ' — '),
-    !,
-    sub_atom(Teks, 0, Awal, _, Nama),
-    sub_atom(Teks, _, Akhir, 0, Saran).
+% saran_hasil(+Hasil, -Saran): saran mengikuti derajat hasil diagnosis.
+saran_hasil(Hasil, Saran) :-
+    Hasil = hasil(D, _, _, _),
+    derajat_hasil(Hasil, Derajat, _),
+    saran(D, Derajat, Saran).
 
 pesan_tanpa_kesimpulan('Sistem tidak dapat menyimpulkan; konsultasikan dengan PPL.').
 catatan_cf('Persentase menunjukkan tingkat keyakinan sistem, bukan tingkat keparahan.').

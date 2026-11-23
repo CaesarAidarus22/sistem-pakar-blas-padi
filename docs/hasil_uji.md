@@ -4,7 +4,7 @@ Metode: black-box testing per skenario dan pengujian menyeluruh atas seluruh kom
 
 Lingkungan: SWI-Prolog 11.0.0. Perintah: `swipl -g run_tests -t halt tests/test_sistem.pl`.
 
-Hasil: **35 dari 35 test lulus.**
+Hasil: **38 dari 38 test lulus.**
 
 Rumus yang diuji:
 
@@ -13,6 +13,7 @@ Rumus yang diuji:
 - Antar-komponen digabung dengan CF1 + CF2 × (1 − CF1).
 - Derajat diagnosis = derajat paling berat di antara semua aturan terpicu.
 - Diagnosis diurutkan menurut CF, lalu derajat lebih berat, lalu ID.
+- Saran tindakan mengikuti derajat hasil diagnosis melalui `saran/3`.
 
 ## Skenario A–G
 
@@ -36,6 +37,9 @@ Kolom "diagnosis yang diharapkan" berasal dari rancangan tugas dan belum divalid
 | Setiap aturan memiliki derajat, dan derajat diagnosis diambil dari aturan terpicu paling berat | Lulus |
 | G1, G2, G3, G5: CF 90% dari R6, Derajat Berat dari R7, sumber keduanya ditampilkan | Lulus |
 | Nama D1 dan D2 tidak lagi memuat tingkat | Lulus |
+| G8 saja memakai saran derajat Awal, bukan saran derajat Berat | Lulus |
+| Skenario A memakai saran derajat Berat | Lulus |
+| 4.096 kombinasi: setiap diagnosis tampil memiliki saran sesuai derajat | Lulus |
 | Pemilihan aturan saat CF seri: derajat lebih berat, lalu ID numerik | Lulus |
 | Urutan diagnosis saat CF seri: G1, G5, G8, G10 menampilkan D2 (Berat) sebelum D1 (Sedang) | Lulus |
 | CF D1 untuk G8, G9, G10 tidak lebih rendah daripada G8, G9 | Lulus |
@@ -56,4 +60,5 @@ Kolom "diagnosis yang diharapkan" berasal dari rancangan tugas dan belum divalid
 - **CF hasil aturan sama dengan CF aturan.** Jawaban hanya Y atau T, sehingga min(CF jawaban) selalu 1.0 untuk aturan yang terpicu.
 - **Sumber keyakinan dan derajat dapat berbeda.** G1, G2, G3, G5 memperoleh CF 90% dari R6 dan Derajat Berat dari R7. Kondisi ini terjadi pada 128 dari 4.096 kombinasi, seluruhnya pada D2.
 - **Skenario F seri pada CF dan derajat.** D1 dan D2 sama-sama 95% dan Berat, sehingga D1 tampil lebih dulu karena ID.
+- **Refresh browser dapat menghentikan server.** Pada SWI-Prolog 11.0.0, request `If-Modified-Since` ke file statis menyebabkan assertion `raiseStackOverflow`. Masalah yang sama muncul pada server minimal di luar project ini.
 - **Akurasi klinis belum diukur.** Test membuktikan sistem konsisten dengan aturan, bukan bahwa diagnosis benar di lapangan. PDF meminta analisis akurasi, sehingga kelompok perlu membandingkan hasil dengan kasus dari literatur atau pakar.

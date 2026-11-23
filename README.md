@@ -16,6 +16,7 @@ tests/test_sistem.pl          unit test plunit
 docs/hasil_uji.md             tabel hasil pengujian
 docs/penjelasan_teknis.md     bahan Bab III dan IV
 docs/contoh_konsol.txt        contoh sesi konsol
+docs/screenshot/              tampilan web sebelum dan sesudah perbaikan
 ```
 
 ## Cara menjalankan
@@ -67,13 +68,29 @@ $ swipl -g run_tests -t halt tests/test_sistem.pl
 
 ### Diagnosis
 
-| ID | Diagnosis | Saran tindakan |
+| ID | Diagnosis |
+|---|---|
+| D1 | Blas leher (neck blast) |
+| D2 | Blas daun (leaf blast) |
+| D3 | Blas buku (node blast) |
+| D4 | Gejala awal blas / risiko tinggi |
+| D5 | Kemungkinan rendah blas |
+
+### Saran per derajat
+
+Predikat `saran/3` menyimpan saran untuk setiap pasangan diagnosis dan derajat. Saran yang tampil mengikuti derajat hasil diagnosis.
+
+| Diagnosis | Derajat | Saran tindakan (draf) |
 |---|---|---|
-| D1 | Blas leher (neck blast) | Kehilangan hasil tinggi; segera aplikasikan fungisida sistemik dan konsultasikan dengan PPL/POPT |
-| D2 | Blas daun (leaf blast) | Kurangi pupuk N, aplikasikan fungisida, perbaiki jarak tanam |
-| D3 | Blas buku (node blast) | Aplikasikan fungisida dan pantau penyebaran ke malai |
-| D4 | Gejala awal blas / risiko tinggi | Pemantauan rutin, perbaiki drainase, gunakan varietas tahan |
-| D5 | Kemungkinan rendah blas | Gejala tidak cukup kuat, kemungkinan penyakit lain; konsultasikan dengan PPL |
+| D1 | Berat | Kehilangan hasil berpotensi tinggi. Segera aplikasikan fungisida sistemik sesuai anjuran label dan konsultasikan dengan PPL/POPT. |
+| D1 | Sedang | Pengisian gabah mulai terganggu. Periksa leher malai pada rumpun sekitar dan konsultasikan kebutuhan fungisida dengan PPL/POPT. |
+| D1 | Awal | Gejala masih awal. Pantau leher malai secara rutin, hindari pupuk N berlebih, jaga drainase, dan hubungi PPL/POPT jika malai mulai patah atau gabah hampa. |
+| D2 | Berat | Segera aplikasikan fungisida sesuai anjuran label, kurangi pupuk N, perbaiki jarak tanam, dan konsultasikan dengan PPL/POPT. |
+| D2 | Sedang | Kurangi pupuk N, perbaiki jarak tanam, pantau penyebaran bercak, dan konsultasikan kebutuhan fungisida dengan PPL/POPT. |
+| D3 | Sedang–Berat | Aplikasikan fungisida sesuai anjuran label, pantau penyebaran ke malai, dan konsultasikan dengan PPL/POPT. |
+| D3 | Awal | Gejala masih awal. Pantau buku batang dan penyebaran ke malai, hindari pupuk N berlebih, dan jaga drainase. |
+| D4 | Risiko | Lakukan pemantauan rutin, perbaiki drainase, dan gunakan varietas tahan. |
+| D5 | Rendah | Gejala tidak cukup kuat dan mungkin disebabkan penyakit lain. Konsultasikan dengan PPL. |
 
 ### Aturan
 
@@ -141,4 +158,5 @@ Rincian ada di [docs/hasil_uji.md](docs/hasil_uji.md). Penjelasan mekanisme ada 
 
 - Nilai CF masih draf dan daftar pustaka belum diisi.
 - Jawaban hanya Y atau T, sehingga CF hasil aturan yang terpicu sama dengan CF aturan.
-- Label derajat masih draf dan perlu divalidasi dengan literatur atau pakar.
+- Label derajat dan saran masih draf dan perlu divalidasi dengan literatur atau pakar.
+- **Bug diketahui:** pada SWI-Prolog 11.0.0, request `If-Modified-Since` ke file statis membuat server berhenti. Refresh biasa di browser dapat memicunya. Gunakan hard refresh (Cmd+Shift+R) sampai diperbaiki.
