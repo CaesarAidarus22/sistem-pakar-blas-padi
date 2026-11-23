@@ -5,6 +5,7 @@
 :- create_prolog_flag(blas_tanpa_server, true, []).
 :- use_module(library(plunit)).
 :- use_module(library(http/http_client)).
+:- use_module(library(http/http_open)).
 :- use_module(library(http/http_json)).
 :- use_module(library(assoc)).
 :- ensure_loaded('../prolog/konsol').
@@ -260,6 +261,19 @@ test(sumber_di_api) :-
     [X] = Balas.diagnosis,
     X.teks_derajat == "Derajat: Berat (berdasarkan aturan R7)",
     X.sumber == "Keyakinan dari R6, derajat dari R7".
+
+% Regresi: request If-Modified-Since mematikan server pada SWI-Prolog 11.0.0.
+test(refresh_if_modified_since_server_tetap_hidup) :-
+    nb_getval(port_uji, Port),
+    format(atom(Url), 'http://localhost:~w/style.css', [Port]),
+    http_open(Url, In1, [status_code(200), header(last_modified, Waktu)]),
+    close(In1),
+    Waktu \== '',
+    http_open(Url, In2, [status_code(200),
+                         request_header('If-Modified-Since' = Waktu)]),
+    close(In2),
+    http_open(Url, In3, [status_code(200)]),
+    close(In3).
 
 test(input_tidak_valid_ditolak) :-
     nb_getval(port_uji, Port),

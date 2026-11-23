@@ -14,7 +14,18 @@
 
 :- http_handler(root(api/gejala), api_gejala, [method(get)]).
 :- http_handler(root(api/diagnosa), api_diagnosa, [method(post)]).
-:- http_handler(root(.), http_reply_from_files(web_root(.), [indexes(['index.html'])]), [prefix]).
+:- http_handler(root(.), sajikan_web, [prefix]).
+
+% Workaround bug SWI-Prolog 11.0.0: request file statis dengan header
+% If-Modified-Since (dikirim browser saat refresh) menghentikan seluruh proses
+% dengan "Assertion failed: (0), function raiseStackOverflow, file pl-alloc.c,
+% line 759". Opsi cache(false) tidak mencegahnya. Header dibuang agar file
+% selalu dikirim penuh dengan status 200, dengan biaya tanpa balasan 304.
+sajikan_web(Request0) :-
+    exclude(header_if_modified_since, Request0, Request),
+    http_reply_from_files(web_root(.), [indexes(['index.html'])], Request).
+
+header_if_modified_since(if_modified_since(_)).
 
 mulai_server :-
     http_server(http_dispatch, [port(localhost:8080)]),

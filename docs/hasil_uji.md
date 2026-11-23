@@ -4,7 +4,7 @@ Metode: black-box testing per skenario dan pengujian menyeluruh atas seluruh kom
 
 Lingkungan: SWI-Prolog 11.0.0. Perintah: `swipl -g run_tests -t halt tests/test_sistem.pl`.
 
-Hasil: **38 dari 38 test lulus.**
+Hasil: **39 dari 39 test lulus.**
 
 Rumus yang diuji:
 
@@ -54,11 +54,12 @@ Kolom "diagnosis yang diharapkan" berasal dari rancangan tugas dan belum divalid
 | Hasil `hasil_diagnosa/1` skenario A–G sama dengan `POST /api/diagnosa` | Lulus |
 | Derajat dan catatan keyakinan tersedia di API | Lulus |
 | Input API tidak valid ditolak dengan status 400 | Lulus |
+| Regresi refresh: request file statis dengan `If-Modified-Since` dibalas 200 dan server tetap hidup | Lulus |
 
 ## Catatan analisis (bahan Bab 4.3)
 
 - **CF hasil aturan sama dengan CF aturan.** Jawaban hanya Y atau T, sehingga min(CF jawaban) selalu 1.0 untuk aturan yang terpicu.
 - **Sumber keyakinan dan derajat dapat berbeda.** G1, G2, G3, G5 memperoleh CF 90% dari R6 dan Derajat Berat dari R7. Kondisi ini terjadi pada 128 dari 4.096 kombinasi, seluruhnya pada D2.
 - **Skenario F seri pada CF dan derajat.** D1 dan D2 sama-sama 95% dan Berat, sehingga D1 tampil lebih dulu karena ID.
-- **Refresh browser dapat menghentikan server.** Pada SWI-Prolog 11.0.0, request `If-Modified-Since` ke file statis menyebabkan assertion `raiseStackOverflow`. Masalah yang sama muncul pada server minimal di luar project ini.
+- **Crash saat refresh sudah ditangani.** Pada SWI-Prolog 11.0.0, request `If-Modified-Since` ke file statis menyebabkan assertion `raiseStackOverflow`. Server kini membuang header tersebut, sehingga file statis selalu dibalas 200.
 - **Akurasi klinis belum diukur.** Test membuktikan sistem konsisten dengan aturan, bukan bahwa diagnosis benar di lapangan. PDF meminta analisis akurasi, sehingga kelompok perlu membandingkan hasil dengan kasus dari literatur atau pakar.

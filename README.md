@@ -159,4 +159,13 @@ Rincian ada di [docs/hasil_uji.md](docs/hasil_uji.md). Penjelasan mekanisme ada 
 - Nilai CF masih draf dan daftar pustaka belum diisi.
 - Jawaban hanya Y atau T, sehingga CF hasil aturan yang terpicu sama dengan CF aturan.
 - Label derajat dan saran masih draf dan perlu divalidasi dengan literatur atau pakar.
-- **Bug diketahui:** pada SWI-Prolog 11.0.0, request `If-Modified-Since` ke file statis membuat server berhenti. Refresh biasa di browser dapat memicunya. Gunakan hard refresh (Cmd+Shift+R) sampai diperbaiki.
+
+## Masalah yang diketahui
+
+**Crash saat refresh pada SWI-Prolog 11.0.0 (sudah ditangani).** Project ini diuji dengan SWI-Prolog 11.0.0 for arm64-darwin. Pada versi tersebut, request file statis dengan header `If-Modified-Since`, yang dikirim browser saat refresh, menghentikan server dengan pesan:
+
+```text
+Assertion failed: (0), function raiseStackOverflow, file pl-alloc.c, line 759.
+```
+
+Masalah yang sama muncul pada server minimal di luar project ini. Sebagai workaround, `sajikan_web/1` di `prolog/server.pl` membuang header tersebut sebelum memanggil `http_reply_from_files/3`. Akibatnya, file statis selalu dikirim penuh dengan status 200 dan tidak memakai balasan 304. Test `refresh_if_modified_since_server_tetap_hidup` menjaga perilaku ini.

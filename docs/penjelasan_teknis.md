@@ -177,7 +177,7 @@ Diagnosis diurutkan dari CF tertinggi. Jika CF seri, derajat lebih berat tampil 
 - Komponen hanya memakai CF tertinggi, sehingga gejala tambahan dalam komponen yang sama belum tentu menaikkan CF. Contoh: G1, G4, G5 tetap 80%.
 - Jawaban hanya Y atau T, sehingga CF hasil aturan yang terpicu sama dengan CF aturan.
 - Label derajat dan teks saran masih draf dan perlu divalidasi dengan literatur atau pakar.
-- Pada SWI-Prolog 11.0.0, request `If-Modified-Since` ke file statis membuat server berhenti, termasuk pada server minimal di luar project ini.
+- Pada SWI-Prolog 11.0.0, request `If-Modified-Since` ke file statis menghentikan server. `sajikan_web/1` membuang header tersebut, sehingga file statis tidak memakai balasan 304.
 - Urutan diagnosis mengutamakan CF. Derajat hanya menjadi penentu saat CF seri.
 - Sistem hanya mencakup blas padi dan tidak membedakan penyakit lain dengan gejala serupa.
 - Pengujian membuktikan konsistensi logika, bukan akurasi diagnosis di lapangan.
