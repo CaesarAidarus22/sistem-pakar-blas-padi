@@ -56,12 +56,15 @@ json_gejala(G, _{id: G, label: Label, deskripsi: Deskripsi}) :-
     gejala(G, Deskripsi),
     upcase_atom(G, Label).
 
-json_hasil(hasil(D, _, Persen, Aturan),
-           _{id: D, label: Label, nama: Nama, saran: Saran, keparahan: Keparahan,
+json_hasil(Item,
+           _{id: D, label: Label, nama: Nama, saran: Saran,
+             derajat: Derajat, derajat_aturan: LabelAturan,
              cf_persen: Persen, cf_teks: Teks, aturan: AturanJson}) :-
+    Item = hasil(D, _, Persen, Aturan),
     upcase_atom(D, Label),
     pisah_diagnosis(D, Nama, Saran),
-    keparahan(D, Keparahan),
+    derajat_hasil(Item, Derajat, IdAturan),
+    upcase_atom(IdAturan, LabelAturan),
     teks_persen(Persen, Teks),
     maplist(json_aturan, Aturan, AturanJson).
 

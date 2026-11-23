@@ -9,7 +9,7 @@ Dokumen ini dapat diadaptasi untuk Bab III dan Bab IV laporan.
 │ basis_pengetahuan.pl         │
 │ gejala/2, diagnosis/2        │
 │ menyebabkan/2, premis/2      │
-│ cf_aturan/2, keparahan/2     │
+│ cf_aturan/2, derajat_aturan/2│
 └──────────────┬───────────────┘
                │
                ▼
@@ -17,7 +17,7 @@ Dokumen ini dapat diadaptasi untuk Bab III dan Bab IV laporan.
 │ mesin_inferensi.pl           │
 │ ya/1, tanya_gejala/1         │
 │ diagnosa/3, cf_hasil/2       │
-│ subsumption, prioritas       │
+│ komponen bukti, prioritas    │
 │ hasil_diagnosa/1             │
 └───────┬──────────────┬───────┘
         │              │
@@ -73,7 +73,7 @@ Predikat ini adalah mekanisme input dinamis. Jawaban disimpan pada `:- dynamic j
 
 ### `hasil_diagnosa/1`
 
-Predikat inti ini mengumpulkan aturan terpicu, menerapkan subsumption, menggabungkan CF, menerapkan prioritas, lalu mengurutkan hasil.
+Predikat inti ini mengumpulkan aturan terpicu, membentuk komponen bukti, menggabungkan CF, menerapkan prioritas, lalu mengurutkan hasil.
 
 ## 4. Perhitungan Certainty Factor
 
@@ -96,18 +96,26 @@ Contoh skenario A (G8, G9, G10):
 
 CF akhir D1 = 95.00%.
 
-## 5. Subsumption CF maksimum per rantai
+## 5. Penggabungan hanya untuk bukti independen
 
-Rumus kombinasi CF mengasumsikan bukti antar-aturan independen. Pada aturan R1 dan R2, G8 dan G9 muncul di keduanya. Jika keduanya digabung, bukti yang sama terhitung dua kali dan CF menjadi terlalu tinggi.
+Rumus kombinasi CF mengasumsikan bukti independen. Aturan yang berbagi gejala bukan bukti independen, sehingga menggabungkannya menghitung gejala yang sama lebih dari sekali.
 
-Langkahnya:
+Langkah untuk aturan terpicu dengan kesimpulan sama:
 
-1. Bandingkan setiap pasangan aturan terpicu dengan kesimpulan sama.
-2. Jika premis satu aturan adalah subset dari premis aturan lain, aturan dengan CF hasil lebih rendah gugur.
-3. Jika CF seri, aturan yang kurang spesifik gugur.
-4. Aturan yang tersisa digabung dengan rumus kombinasi.
+1. Kelompokkan aturan menjadi komponen. Dua aturan berada pada satu komponen jika premisnya beririsan, secara transitif.
+2. Di dalam satu komponen, ambil CF hasil tertinggi. Subset adalah kasus khusus irisan, sehingga langkah ini menggantikan subsumption.
+3. Jika CF seri, pilih derajat lebih berat, lalu ID aturan.
+4. Gabungkan nilai antar-komponen dengan `CF1 + CF2 × (1 − CF1)`.
 
-Seluruh perbandingan memakai himpunan aturan terpicu awal, sehingga hasil tidak bergantung pada urutan aturan. Aturan yang bertahan tidak memiliki pasangan subset. Pengujian brute force membuktikan setiap aturan R1–R21 pernah dihitung pada minimal satu kombinasi.
+Contoh:
+
+| Gejala | Aturan terpicu | Komponen | Hasil |
+|---|---|---|---:|
+| G1, G4, G5 → D2 | R7 (0.80), R8 (0.75) | {R7, R8}, berbagi G1 | 80% |
+| G11, G12 → D4 | R11 (0.50), R14 (0.40), R15 (0.40) | {R11, R14, R15}, transitif melalui R11 | 50% |
+| G1, G11 → D4 | R12 (0.30), R14 (0.40) | {R12}, {R14} | 0.40 + 0.30 × 0.60 = 58% |
+
+Pengujian brute force atas 4.096 kombinasi menunjukkan 0 pelanggaran monotonisitas CF, tidak ada aturan mati, dan prioritas D4/D5 tetap berlaku.
 
 ## 6. Prioritas diagnosis
 
@@ -120,29 +128,36 @@ Seluruh perbandingan memakai himpunan aturan terpicu awal, sehingga hasil tidak 
 
 Tingkat prioritas disimpan pada `tingkat_diagnosis/2` di basis pengetahuan.
 
-## 7. Keyakinan dan keparahan
+## 7. Keyakinan dan derajat
 
-CF dan keparahan menjawab dua pertanyaan berbeda.
+CF dan derajat menjawab dua pertanyaan berbeda.
 
 - **CF (keyakinan):** seberapa yakin sistem bahwa diagnosis itu benar berdasarkan gejala.
-- **Keparahan:** seberapa berat dampak penyakit jika diagnosis itu benar.
+- **Derajat:** seberapa berat kondisi menurut aturan yang menjadi dasar diagnosis.
 
-| Diagnosis | Label keparahan |
+Derajat disimpan per aturan pada `derajat_aturan/2`. Label diagnosis diambil dari aturan terpicu dengan CF tertinggi. Jika CF seri, urutannya Berat > Sedang–Berat > Sedang > Awal > Risiko > Rendah, lalu ID aturan.
+
+| Aturan | Derajat (draf) |
 |---|---|
-| D1 | Berat |
-| D2 | Sedang–Berat |
-| D3 | Sedang |
-| D4 | Ringan/Risiko |
-| D5 | Rendah |
+| R1, R2 | Berat |
+| R3 | Sedang |
+| R4 | Awal |
+| R5, R7 | Berat |
+| R6, R8 | Sedang |
+| R9 | Sedang–Berat |
+| R10 | Awal |
+| R11–R15 | Risiko |
+| R16–R21 | Rendah |
 
-Contoh: G8 saja menghasilkan D1 dengan keyakinan 55% dan keparahan Berat. Artinya sistem cukup ragu, tetapi jika benar dampaknya berat. Karena itu, konsol dan web menampilkan kalimat "Persentase menunjukkan tingkat keyakinan sistem, bukan tingkat keparahan."
+Contoh: G8 saja menghasilkan D1 dengan keyakinan 55% dan "Derajat: Awal (berdasarkan aturan R4)". Konsol dan web juga menampilkan kalimat "Persentase menunjukkan tingkat keyakinan sistem, bukan tingkat keparahan."
 
 ## 8. Batasan sistem
 
 - Nilai CF masih draf dan belum tervalidasi literatur atau pakar.
-- Aturan yang hanya beririsan sebagian tetap digabung. Contoh: G1, G4, G5 menghasilkan 95% dari R7 dan R8, walaupun G1 dipakai keduanya.
+- Komponen hanya memakai CF tertinggi, sehingga gejala tambahan dalam komponen yang sama belum tentu menaikkan CF. Contoh: G1, G4, G5 tetap 80%.
 - Jawaban hanya Y atau T, sehingga CF hasil aturan yang terpicu sama dengan CF aturan.
-- Label keparahan melekat pada diagnosis, bukan pada derajat aturan yang terpicu.
+- Label derajat D2 dapat turun saat gejala bertambah, walaupun CF tidak turun. Contoh: G1, G2, G5 = Berat (R7, 80%), lalu dengan G3 = Sedang (R6, 90%). Ini terjadi pada 256 transisi.
+- Nama diagnosis dapat berbeda dengan derajat. Contoh: G8 saja tampil sebagai "tingkat berat" dengan Derajat Awal.
 - Urutan diagnosis mengikuti CF, bukan tingkat keparahan penyakit.
 - Sistem hanya mencakup blas padi dan tidak membedakan penyakit lain dengan gejala serupa.
 - Pengujian membuktikan konsistensi logika, bukan akurasi diagnosis di lapangan.

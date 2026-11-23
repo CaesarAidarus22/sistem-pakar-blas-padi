@@ -58,9 +58,14 @@ test(faktor_risiko_di_bawah_diagnosis_utama) :-
 test(faktor_risiko_tidak_muncul_pada_d4) :-
     uji([g11, g12], [hasil(d4, _, _, _)], []).
 
-test(keparahan_terpisah_dari_cf) :-
-    findall(D-K, keparahan(D, K), [d1-'Berat', d2-'Sedang–Berat', d3-'Sedang',
-                                   d4-'Ringan/Risiko', d5-'Rendah']).
+test(derajat_dari_aturan_cf_tertinggi) :-
+    forall(member(Gs-L-R, [[g8]-'Awal'-r4, [g8, g10]-'Sedang'-r3, [g8, g9]-'Berat'-r2,
+                           [g1, g5]-'Berat'-r7, [g6, g7]-'Sedang–Berat'-r9,
+                           [g11]-'Risiko'-r14, [g9]-'Rendah'-r19]),
+           ( uji(Gs, [H], _), derajat_hasil(H, L, R) )).
+
+test(setiap_aturan_punya_derajat) :-
+    forall(premis(R, _), ( derajat_aturan(R, L), urutan_derajat(L, _) )).
 
 test(seri_urut_id) :-
     Hasil = [hasil(d2, 0.5, 50.0, []), hasil(d1, 0.5, 50.0, [])],
@@ -70,7 +75,7 @@ test(seri_urut_id) :-
 
 :- end_tests(skenario).
 
-:- begin_tests(subsumption).
+:- begin_tests(komponen_bukti).
 
 test(cf_d1_tidak_turun) :-
     uji([g8, g9], [hasil(d1, CF1, _, _)], _),
@@ -81,18 +86,30 @@ test(hanya_cf_tertinggi_per_rantai) :-
     uji([g8, g9, g10], [hasil(d1, _, _, Aturan)], _),
     findall(R, member(aturan(R, _, _, _, dihitung), Aturan), [r1]).
 
-test(seri_pilih_yang_lebih_spesifik) :-
-    A = a(r_umum, [g1], 0.5),
-    B = a(r_khusus, [g1, g2], 0.5),
-    exclude(kalah_di([A, B]), [A, B], [B]).
+test(seri_pilih_derajat_lebih_berat) :-
+    wakil_komponen([a(r3, [g8], 0.5), a(r1, [g8], 0.5)], a(r1, _, _)).
 
-test(irisan_sebagian_tetap_digabung) :-
+test(seri_derajat_sama_pilih_id_numerik) :-
+    wakil_komponen([a(r10, [g1], 0.5), a(r4, [g1], 0.5)], a(r4, _, _)).
+
+test(komponen_transitif) :-
+    uji([g11, g12], [hasil(d4, CF, _, Aturan)], _),
+    findall(R, member(aturan(R, _, _, _, dihitung), Aturan), [r11]),
+    abs(CF - 0.5) < 1.0e-9.
+
+test(komponen_lepas_digabung) :-
+    uji([g1, g11], [hasil(d4, CF, _, Aturan)], _),
+    findall(R, member(aturan(R, _, _, _, dihitung), Aturan), Rs),
+    msort(Rs, [r12, r14]),
+    abs(CF - 0.58) < 1.0e-9.
+
+test(irisan_sebagian_ambil_tertinggi) :-
     uji([g1, g4, g5], [hasil(d2, CF, _, Aturan)], _),
     findall(R, member(aturan(R, _, _, _, dihitung), Aturan), Rs),
-    msort(Rs, [r7, r8]),
-    abs(CF - 0.95) < 1.0e-9.
+    Rs == [r7],
+    abs(CF - 0.80) < 1.0e-9.
 
-:- end_tests(subsumption).
+:- end_tests(komponen_bukti).
 
 :- begin_tests(brute_force).
 
@@ -169,12 +186,13 @@ test(skenario_a_g_sama_dengan_api) :-
                             atom_string(D, X.id),
                             atom_string(T, X.cf_teks) ), Harap) )).
 
-test(keparahan_dan_catatan_di_api) :-
+test(derajat_dan_catatan_di_api) :-
     nb_getval(port_uji, Port),
     format(atom(Url), 'http://localhost:~w/api/diagnosa', [Port]),
     http_post(Url, json(_{g8: "y"}), Balas, [json_object(dict)]),
     [X] = Balas.diagnosis,
-    X.keparahan == "Berat",
+    X.derajat == "Awal",
+    X.derajat_aturan == "R4",
     catatan_cf(C),
     atom_string(C, Balas.catatan).
 

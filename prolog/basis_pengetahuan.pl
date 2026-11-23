@@ -62,12 +62,36 @@ tingkat_diagnosis(d3, 1).
 tingkat_diagnosis(d4, 2).
 tingkat_diagnosis(d5, 3).
 
-% Label keparahan, terpisah dari CF (tingkat keyakinan).
-keparahan(d1, 'Berat').
-keparahan(d2, 'Sedang–Berat').
-keparahan(d3, 'Sedang').
-keparahan(d4, 'Ringan/Risiko').
-keparahan(d5, 'Rendah').
+% Derajat per aturan. Label diagnosis diambil dari aturan ber-CF tertinggi.
+derajat_aturan(r1, 'Berat'). % TODO: validasi literatur
+derajat_aturan(r2, 'Berat'). % TODO: validasi literatur
+derajat_aturan(r3, 'Sedang'). % TODO: validasi literatur
+derajat_aturan(r4, 'Awal'). % TODO: validasi literatur
+derajat_aturan(r5, 'Berat'). % TODO: validasi literatur
+derajat_aturan(r6, 'Sedang'). % TODO: validasi literatur
+derajat_aturan(r7, 'Berat'). % TODO: validasi literatur
+derajat_aturan(r8, 'Sedang'). % TODO: validasi literatur
+derajat_aturan(r9, 'Sedang–Berat'). % TODO: validasi literatur
+derajat_aturan(r10, 'Awal'). % TODO: validasi literatur
+derajat_aturan(r11, 'Risiko'). % TODO: validasi literatur
+derajat_aturan(r12, 'Risiko'). % TODO: validasi literatur
+derajat_aturan(r13, 'Risiko'). % TODO: validasi literatur
+derajat_aturan(r14, 'Risiko'). % TODO: validasi literatur
+derajat_aturan(r15, 'Risiko'). % TODO: validasi literatur
+derajat_aturan(r16, 'Rendah'). % TODO: validasi literatur
+derajat_aturan(r17, 'Rendah'). % TODO: validasi literatur
+derajat_aturan(r18, 'Rendah'). % TODO: validasi literatur
+derajat_aturan(r19, 'Rendah'). % TODO: validasi literatur
+derajat_aturan(r20, 'Rendah'). % TODO: validasi literatur
+derajat_aturan(r21, 'Rendah'). % TODO: validasi literatur
+
+% Urutan tie-break: angka kecil = derajat lebih berat.
+urutan_derajat('Berat', 1).
+urutan_derajat('Sedang–Berat', 2).
+urutan_derajat('Sedang', 3).
+urutan_derajat('Awal', 4).
+urutan_derajat('Risiko', 5).
+urutan_derajat('Rendah', 6).
 
 % ---------------------------------------------------------------------
 % ATURAN: menyebabkan(Diagnosis, IdAturan) :- ya(Gejala), ...

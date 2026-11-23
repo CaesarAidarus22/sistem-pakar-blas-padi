@@ -8,7 +8,7 @@ Sistem pakar berbasis aturan untuk memperkirakan diagnosis dini penyakit blas (*
 
 ```text
 prolog/basis_pengetahuan.pl   fakta gejala, diagnosis, aturan, nilai CF (file yang diedit saat validasi)
-prolog/mesin_inferensi.pl     backward chaining, CF, subsumption, prioritas diagnosis
+prolog/mesin_inferensi.pl     backward chaining, CF, komponen bukti, prioritas diagnosis
 prolog/konsol.pl              antarmuka konsol
 prolog/server.pl              web server dan API, port 8080
 web/                          index.html, style.css, app.js (hanya tampilan)
@@ -67,39 +67,39 @@ $ swipl -g run_tests -t halt tests/test_sistem.pl
 
 ### Diagnosis
 
-| ID | Diagnosis | Keparahan | Saran tindakan |
-|---|---|---|---|
-| D1 | Blas leher (neck blast), tingkat berat | Berat | Kehilangan hasil tinggi; segera aplikasikan fungisida sistemik dan konsultasikan dengan PPL/POPT |
-| D2 | Blas daun (leaf blast), tingkat sedang–berat | Sedang–Berat | Kurangi pupuk N, aplikasikan fungisida, perbaiki jarak tanam |
-| D3 | Blas buku (node blast) | Sedang | Aplikasikan fungisida dan pantau penyebaran ke malai |
-| D4 | Gejala awal blas / risiko tinggi | Ringan/Risiko | Pemantauan rutin, perbaiki drainase, gunakan varietas tahan |
-| D5 | Kemungkinan rendah blas | Rendah | Gejala tidak cukup kuat, kemungkinan penyakit lain; konsultasikan dengan PPL |
+| ID | Diagnosis | Saran tindakan |
+|---|---|---|
+| D1 | Blas leher (neck blast), tingkat berat | Kehilangan hasil tinggi; segera aplikasikan fungisida sistemik dan konsultasikan dengan PPL/POPT |
+| D2 | Blas daun (leaf blast), tingkat sedang–berat | Kurangi pupuk N, aplikasikan fungisida, perbaiki jarak tanam |
+| D3 | Blas buku (node blast) | Aplikasikan fungisida dan pantau penyebaran ke malai |
+| D4 | Gejala awal blas / risiko tinggi | Pemantauan rutin, perbaiki drainase, gunakan varietas tahan |
+| D5 | Kemungkinan rendah blas | Gejala tidak cukup kuat, kemungkinan penyakit lain; konsultasikan dengan PPL |
 
 ### Aturan
 
-| Aturan | IF | THEN | CF aturan (draf) |
-|---|---|---|---:|
-| R1 | G8 AND G9 AND G10 | D1 | 0.95 |
-| R2 | G8 AND G9 | D1 | 0.90 |
-| R3 | G8 AND G10 | D1 | 0.80 |
-| R4 | G8 | D1 | 0.55 |
-| R5 | G1 AND G2 AND G3 AND G4 | D2 | 0.95 |
-| R6 | G1 AND G2 AND G3 | D2 | 0.90 |
-| R7 | G1 AND G5 | D2 | 0.80 |
-| R8 | G1 AND G4 | D2 | 0.75 |
-| R9 | G6 AND G7 | D3 | 0.90 |
-| R10 | G6 | D3 | 0.60 |
-| R11 | G11 AND G12 | D4 | 0.50 |
-| R12 | G1 | D4 | 0.30 |
-| R13 | G2 AND G3 | D4 | 0.30 |
-| R14 | G11 | D4 | 0.40 |
-| R15 | G12 | D4 | 0.40 |
-| R16 | G4 | D5 | 0.30 |
-| R17 | G5 | D5 | 0.30 |
-| R18 | G7 | D5 | 0.40 |
-| R19 | G9 | D5 | 0.40 |
-| R20 | G10 | D5 | 0.35 |
-| R21 | G9 AND G10 | D5 | 0.50 |
+| Aturan | IF | THEN | CF aturan (draf) | Derajat (draf) |
+|---|---|---|---:|---|
+| R1 | G8 AND G9 AND G10 | D1 | 0.95 | Berat |
+| R2 | G8 AND G9 | D1 | 0.90 | Berat |
+| R3 | G8 AND G10 | D1 | 0.80 | Sedang |
+| R4 | G8 | D1 | 0.55 | Awal |
+| R5 | G1 AND G2 AND G3 AND G4 | D2 | 0.95 | Berat |
+| R6 | G1 AND G2 AND G3 | D2 | 0.90 | Sedang |
+| R7 | G1 AND G5 | D2 | 0.80 | Berat |
+| R8 | G1 AND G4 | D2 | 0.75 | Sedang |
+| R9 | G6 AND G7 | D3 | 0.90 | Sedang–Berat |
+| R10 | G6 | D3 | 0.60 | Awal |
+| R11 | G11 AND G12 | D4 | 0.50 | Risiko |
+| R12 | G1 | D4 | 0.30 | Risiko |
+| R13 | G2 AND G3 | D4 | 0.30 | Risiko |
+| R14 | G11 | D4 | 0.40 | Risiko |
+| R15 | G12 | D4 | 0.40 | Risiko |
+| R16 | G4 | D5 | 0.30 | Rendah |
+| R17 | G5 | D5 | 0.30 | Rendah |
+| R18 | G7 | D5 | 0.40 | Rendah |
+| R19 | G9 | D5 | 0.40 | Rendah |
+| R20 | G10 | D5 | 0.35 | Rendah |
+| R21 | G9 AND G10 | D5 | 0.50 | Rendah |
 
 ## Perhitungan CF
 
@@ -110,9 +110,9 @@ CFgab    = CF1 + CF2 × (1 − CF1)
 
 **CF hanya ada pada level aturan.** Kolom CF gejala pada template bersifat opsional ("Jika Ada"). CF gejala tidak dipakai karena sebelumnya membuat bobot pakar dihitung ganda, di gejala dan di aturan, sehingga aturan yang lebih spesifik kalah.
 
-**Keyakinan berbeda dari keparahan.** Persentase menunjukkan tingkat keyakinan sistem, bukan tingkat keparahan. Keparahan ditampilkan sebagai label terpisah pada setiap diagnosis.
+**Keyakinan berbeda dari derajat.** Persentase menunjukkan tingkat keyakinan sistem, bukan tingkat keparahan. Derajat berasal dari `derajat_aturan/2` pada aturan ber-CF tertinggi dan tampil sebagai "Derajat: <label> (berdasarkan aturan Rx)". Jika CF seri, derajat lebih berat dipilih (Berat > Sedang–Berat > Sedang > Awal > Risiko > Rendah), lalu ID aturan.
 
-**Subsumption (CF maksimum per rantai).** Rumus kombinasi mengasumsikan bukti antar-aturan independen. Karena itu, jika premis satu aturan adalah subset dari premis aturan lain dengan kesimpulan sama, hanya aturan dengan CF hasil lebih tinggi yang dihitung. Jika seri, aturan yang lebih spesifik dipilih. Semua pasangan dibandingkan dari himpunan aturan terpicu, sehingga hasil tidak bergantung pada urutan aturan.
+**Penggabungan hanya untuk bukti independen.** Rumus kombinasi CF mengasumsikan bukti independen, sedangkan aturan yang berbagi gejala bukan bukti independen. Aturan terpicu dengan kesimpulan sama dikelompokkan menjadi komponen berdasarkan irisan premis secara transitif. Setiap komponen hanya menyumbang CF hasil tertinggi. Nilai antar-komponen, yang premisnya saling lepas, digabung dengan rumus di atas.
 
 **Prioritas tampil.**
 
@@ -123,15 +123,15 @@ CFgab    = CF1 + CF2 × (1 − CF1)
 
 ## Pengujian
 
-| Skenario | Input | Hasil sistem | Aturan dihitung |
-|---|---|---|---|
-| A | G8, G9, G10 | D1 95.00% | R1 |
-| B | G1, G2, G3, G4 | D2 95.00% | R5 |
-| C | G6, G7 | D3 90.00% | R9 |
-| D | G11, G12 | D4 50.00% | R11 |
-| E | tanpa gejala | tidak dapat menyimpulkan | – |
-| F | G1, G2, G3, G4, G8, G9, G10 | D1 95.00%, D2 95.00% (seri, urut ID) | R1; R5 |
-| G | G9 | D5 40.00% | R19 |
+| Skenario | Input | Hasil sistem | Derajat | Aturan dihitung |
+|---|---|---|---|---|
+| A | G8, G9, G10 | D1 95.00% | Berat | R1 |
+| B | G1, G2, G3, G4 | D2 95.00% | Berat | R5 |
+| C | G6, G7 | D3 90.00% | Sedang–Berat | R9 |
+| D | G11, G12 | D4 50.00% | Risiko | R11 |
+| E | tanpa gejala | tidak dapat menyimpulkan | – | – |
+| F | G1, G2, G3, G4, G8, G9, G10 | D1 95.00%, D2 95.00% (seri, urut ID) | Berat; Berat | R1; R5 |
+| G | G9 | D5 40.00% | Rendah | R19 |
 
 Rincian ada di [docs/hasil_uji.md](docs/hasil_uji.md). Penjelasan mekanisme ada di [docs/penjelasan_teknis.md](docs/penjelasan_teknis.md).
 
@@ -139,4 +139,5 @@ Rincian ada di [docs/hasil_uji.md](docs/hasil_uji.md). Penjelasan mekanisme ada 
 
 - Nilai CF masih draf dan daftar pustaka belum diisi.
 - Jawaban hanya Y atau T, sehingga CF hasil aturan yang terpicu sama dengan CF aturan.
-- Aturan yang premisnya hanya beririsan sebagian tetap digabung, sehingga gejala yang sama masih dapat berkontribusi dua kali.
+- Label derajat D2 dapat turun saat gejala bertambah, walaupun CF tidak turun. Contoh: G1, G2, G5 = Berat (R7, 80%), lalu dengan G3 = Sedang (R6, 90%).
+- Nama diagnosis dapat berbeda dengan derajat. Contoh: G8 saja tampil sebagai "tingkat berat" dengan Derajat Awal.

@@ -43,7 +43,7 @@
       <p>Blas adalah penyakit padi yang disebabkan jamur <em>Pyricularia oryzae</em>. Sistem ini membedakan gejala pada daun, buku batang, dan leher malai.</p>
       <h2>Metode</h2>
       <p><strong>Backward chaining</strong> menguji setiap kemungkinan diagnosis melalui aturan <code>menyebabkan/2</code>. Prolog memakai backtracking untuk mencoba aturan alternatif.</p>
-      <p><strong>Certainty Factor</strong> menyatakan tingkat keyakinan. CF hanya ada pada level aturan: CF hasil adalah CF aturan dikali nilai minimum CF jawaban pengguna (Ya = 1.0). Persentase menunjukkan tingkat keyakinan sistem, bukan tingkat keparahan. Pada rantai aturan yang premisnya subset, hanya CF tertinggi yang dihitung. Aturan yang tersisa digabung dengan <code>CF1 + CF2 × (1 − CF1)</code>.</p>
+      <p><strong>Certainty Factor</strong> menyatakan tingkat keyakinan. CF hanya ada pada level aturan: CF hasil adalah CF aturan dikali nilai minimum CF jawaban pengguna (Ya = 1.0). Persentase menunjukkan tingkat keyakinan sistem, bukan tingkat keparahan. Aturan yang berbagi gejala bukan bukti independen, sehingga hanya CF tertingginya yang dipakai. Kelompok aturan yang gejalanya saling lepas digabung dengan <code>CF1 + CF2 × (1 − CF1)</code>.</p>
       <p class="note">Nilai CF masih draf dan perlu divalidasi dengan literatur atau pakar. Hasil sistem bukan pengganti pemeriksaan PPL/POPT.</p>
       <h2>Daftar pustaka</h2>
       <ol>

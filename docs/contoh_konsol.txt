@@ -20,7 +20,7 @@ G12: Pemupukan nitrogen (urea) berlebihan? (Y/T): T
 
 === HASIL DIAGNOSA ===
 1. [D1] Blas leher (neck blast), tingkat berat
-   Keparahan: Berat
+   Derajat: Berat (berdasarkan aturan R1)
    CF (keyakinan): 95.00%
    Saran: kehilangan hasil tinggi; segera aplikasikan fungisida sistemik dan konsultasikan dengan PPL/POPT
    Mengapa:

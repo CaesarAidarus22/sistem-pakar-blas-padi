@@ -67,7 +67,7 @@ function kartuAturan(aturan) {
   const daftar = el("ul");
   aturan.forEach((a) => {
     const premis = a.premis.map((p) => `${p.label} (${p.deskripsi})`).join(" DAN ");
-    const status = a.status === "dihitung" ? "dihitung" : "tidak dihitung, kalah dalam rantai subset";
+    const status = a.status === "dihitung" ? "dihitung" : "tidak dihitung, berbagi gejala dengan aturan yang dipilih";
     daftar.append(el("li", a.status === "dihitung" ? "" : "diabaikan",
       `${a.label}: JIKA ${premis}. CF aturan ${a.cf_aturan.toFixed(2)}, hasil ${a.cf_hasil_teks}, ${status}.`));
   });
@@ -80,7 +80,7 @@ function kartuDiagnosis(d, utama) {
   const judul = el("div", "judul-hasil");
   judul.append(el(utama ? "h2" : "h3", "", `${d.label}: ${d.nama}`), el("span", "angka", d.cf_teks));
   const meta = el("p", "meta");
-  meta.append(el("span", "keparahan", `Keparahan: ${d.keparahan}`), el("span", "", `Keyakinan sistem: ${d.cf_teks}`));
+  meta.append(el("span", "derajat", `Derajat: ${d.derajat} (berdasarkan aturan ${d.derajat_aturan})`), el("span", "", `Keyakinan sistem: ${d.cf_teks}`));
   const bar = el("progress");
   bar.max = 100;
   bar.value = d.cf_persen;

@@ -1,5 +1,5 @@
 % mesin_inferensi.pl
-% Backward chaining, Certainty Factor, subsumption, dan prioritas diagnosis.
+% Backward chaining, Certainty Factor, komponen bukti, dan prioritas diagnosis.
 % Konsol dan web sama-sama memakai hasil_diagnosa/1.
 
 :- encoding(utf8).
@@ -95,7 +95,8 @@ hasil_per_diagnosis(hasil(D, CF, Persen, Aturan)) :-
     diagnosis(D, _),
     findall(a(R, P, C), (diagnosa(D, R, C), premis(R, P)), Terpicu),
     Terpicu \== [],
-    exclude(kalah_di(Terpicu), Terpicu, Dihitung),
+    komponen_premis(Terpicu, Komponen),
+    maplist(wakil_komponen, Komponen, Dihitung),
     foldl(gabung_cf, Dihitung, 0.0, CF),
     persen(CF, Persen),
     maplist(info_aturan(Dihitung), Terpicu, Aturan).
@@ -109,34 +110,42 @@ info_aturan(Dihitung, A, aturan(R, Premis, CFAturan, CFHasil, Status)) :-
     ).
 
 % ---------------------------------------------------------------------
-% Subsumption: CF maksimum per rantai subset
+% Penggabungan hanya untuk bukti independen
 % ---------------------------------------------------------------------
 
-% Aturan gugur jika ada aturan terpicu lain yang premisnya sebanding
-% (subset/superset) dan menang. Semua pasangan dibandingkan dari himpunan awal,
-% sehingga hasilnya tidak bergantung pada urutan aturan.
-kalah_di(Terpicu, A) :-
-    member(B, Terpicu),
-    B \== A,
-    menang(B, A),
+% komponen_premis(+Terpicu, -Komponen): dua aturan satu komponen jika premisnya
+% beririsan, secara transitif. Antar-komponen tidak berbagi gejala.
+komponen_premis(Terpicu, Komponen) :-
+    foldl(masukkan_komponen, Terpicu, [], Komponen).
+
+masukkan_komponen(A, Lama, [[A|Gabungan]|Lepas]) :-
+    partition(beririsan(A), Lama, Sentuh, Lepas),
+    append(Sentuh, Gabungan).
+
+beririsan(a(_, Premis, _), Komponen) :-
+    member(a(_, Lain, _), Komponen),
+    member(G, Premis),
+    memberchk(G, Lain),
     !.
 
-menang(a(_, PB, CB), a(_, PA, CA)) :-
-    subset_ketat(PA, PB),
-    bulat(CB, NB),
-    bulat(CA, NA),
-    NB >= NA.
-menang(a(_, PB, CB), a(_, PA, CA)) :-
-    subset_ketat(PB, PA),
-    bulat(CB, NB),
-    bulat(CA, NA),
-    NB > NA.
+% wakil_komponen(+Aturan, -Wakil): CF tertinggi; seri = derajat lebih berat, lalu ID.
+wakil_komponen(Aturan, Wakil) :-
+    map_list_to_pairs(kunci_aturan, Aturan, Berkunci),
+    keysort(Berkunci, [_-Wakil|_]).
 
-subset_ketat(Kecil, Besar) :-
-    subset(Kecil, Besar),
-    length(Kecil, K),
-    length(Besar, B),
-    K < B.
+kunci_aturan(a(R, _, CF), k(Negatif, Urutan, Nomor)) :-
+    bulat(CF, B),
+    Negatif is -B,
+    derajat_aturan(R, Label),
+    urutan_derajat(Label, Urutan),
+    atom_concat(r, Teks, R),
+    atom_number(Teks, Nomor).
+
+% derajat_hasil(+Hasil, -Label, -IdAturan): derajat dari aturan ber-CF tertinggi.
+derajat_hasil(hasil(_, _, _, Aturan), Label, IdAturan) :-
+    findall(a(R, P, C), member(aturan(R, P, _, C, _), Aturan), Semua),
+    wakil_komponen(Semua, a(IdAturan, _, _)),
+    derajat_aturan(IdAturan, Label).
 
 % Perbandingan seri tahan terhadap galat pembulatan floating point.
 bulat(CF, B) :-

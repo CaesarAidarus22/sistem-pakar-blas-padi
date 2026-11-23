@@ -35,13 +35,15 @@ tampilkan_hasil([H|T], Faktor) :-
     catatan_cf(Catatan),
     format('Catatan: ~w~n', [Catatan]).
 
-tampilkan_diagnosis(No, hasil(D, _, Persen, Aturan)) :-
+tampilkan_diagnosis(No, Item) :-
+    Item = hasil(D, _, Persen, Aturan),
     pisah_diagnosis(D, Nama, Saran),
-    keparahan(D, Keparahan),
+    derajat_hasil(Item, Derajat, IdAturan),
+    upcase_atom(IdAturan, LabelAturan),
     teks_persen(Persen, Teks),
     upcase_atom(D, Label),
-    format('~w. [~w] ~w~n   Keparahan: ~w~n   CF (keyakinan): ~s~n   Saran: ~w~n   Mengapa:~n',
-           [No, Label, Nama, Keparahan, Teks, Saran]),
+    format('~w. [~w] ~w~n   Derajat: ~w (berdasarkan aturan ~w)~n   CF (keyakinan): ~s~n   Saran: ~w~n   Mengapa:~n',
+           [No, Label, Nama, Derajat, LabelAturan, Teks, Saran]),
     forall(member(A, Aturan), tampilkan_aturan(A)).
 
 tampilkan_aturan(aturan(R, Premis, CFAturan, CFHasil, Status)) :-
