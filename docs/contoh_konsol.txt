@@ -1,3 +1,4 @@
+% Contoh 1: G8, G9, G10, dan G11 = Y
 ?- consult('prolog/konsol.pl').
 true.
 
@@ -19,7 +20,7 @@ G11: Lingkungan lembap, berembun, atau sering hujan? (Y/T): Y
 G12: Pemupukan nitrogen (urea) berlebihan? (Y/T): T
 
 === HASIL DIAGNOSA ===
-1. [D1] Blas leher (neck blast), tingkat berat
+1. [D1] Blas leher (neck blast)
    Derajat: Berat (berdasarkan aturan R1)
    CF (keyakinan): 95.00%
    Saran: kehilangan hasil tinggi; segera aplikasikan fungisida sistemik dan konsultasikan dengan PPL/POPT
@@ -30,5 +31,38 @@ G12: Pemupukan nitrogen (urea) berlebihan? (Y/T): T
    - R4: IF G8 (CF aturan 0.55, hasil 55.00%, diabaikan)
 Faktor risiko pendukung:
    - G11: Lingkungan lembap, berembun, atau sering hujan
+Catatan: Persentase menunjukkan tingkat keyakinan sistem, bukan tingkat keparahan.
+true.
+
+% Contoh 2: G1, G2, G3, dan G5 = Y (sumber keyakinan dan derajat berbeda)
+?- consult('prolog/konsol.pl').
+true.
+
+?- mulai.
+=== SISTEM PAKAR DIAGNOSA DINI PENYAKIT BLAS PADI ===
+Jawab setiap gejala dengan Y (ya) atau T (tidak).
+
+G1: Bercak belah ketupat (lonjong, ujung runcing) pada daun? (Y/T): Y
+G2: Pusat bercak abu-abu atau keputihan? (Y/T): Y
+G3: Tepi bercak cokelat kemerahan? (Y/T): Y
+G4: Bercak menyatu sehingga daun mengering? (Y/T): T
+G5: Bibit atau anakan layu dan mati? (Y/T): Y
+G6: Buku batang cokelat kehitaman? (Y/T): T
+G7: Batang mudah patah pada bagian buku? (Y/T): T
+G8: Leher malai cokelat kehitaman (busuk leher)? (Y/T): T
+G9: Malai patah atau terkulai? (Y/T): T
+G10: Gabah hampa atau pengisian tidak sempurna? (Y/T): T
+G11: Lingkungan lembap, berembun, atau sering hujan? (Y/T): T
+G12: Pemupukan nitrogen (urea) berlebihan? (Y/T): T
+
+=== HASIL DIAGNOSA ===
+1. [D2] Blas daun (leaf blast)
+   Derajat: Berat (berdasarkan aturan R7)
+   Keyakinan dari R6, derajat dari R7
+   CF (keyakinan): 90.00%
+   Saran: kurangi pupuk N, aplikasikan fungisida, perbaiki jarak tanam
+   Mengapa:
+   - R6: IF G1 AND G2 AND G3 (CF aturan 0.90, hasil 90.00%, dihitung)
+   - R7: IF G1 AND G5 (CF aturan 0.80, hasil 80.00%, diabaikan)
 Catatan: Persentase menunjukkan tingkat keyakinan sistem, bukan tingkat keparahan.
 true.

@@ -79,7 +79,7 @@ cf_hasil(IdAturan, CFHasil) :-
     CFHasil is CFAturan * CFPremis.
 
 % hasil_diagnosa(-Hasil): predikat inti untuk konsol dan web.
-% Hasil = [hasil(Diagnosis, CF, Persen, Aturan), ...], terurut CF menurun lalu ID.
+% Hasil = [hasil(Diagnosis, CF, Persen, Aturan), ...], terurut menurut kunci_urut/2.
 hasil_diagnosa(Hasil) :-
     findall(H, hasil_per_diagnosis(H), Semua),
     terapkan_prioritas(Semua, Tampil),
@@ -87,9 +87,13 @@ hasil_diagnosa(Hasil) :-
     keysort(Berkunci, Urut),
     pairs_values(Urut, Hasil).
 
-kunci_urut(hasil(D, CF, _, _), k(Negatif, D)) :-
+% Urutan diagnosis: CF tertinggi, lalu derajat lebih berat, lalu ID.
+kunci_urut(Hasil, k(Negatif, Urutan, D)) :-
+    Hasil = hasil(D, CF, _, _),
     bulat(CF, B),
-    Negatif is -B.
+    Negatif is -B,
+    derajat_hasil(Hasil, Label, _),
+    urutan_derajat(Label, Urutan).
 
 hasil_per_diagnosis(hasil(D, CF, Persen, Aturan)) :-
     diagnosis(D, _),
@@ -128,7 +132,8 @@ beririsan(a(_, Premis, _), Komponen) :-
     memberchk(G, Lain),
     !.
 
-% wakil_komponen(+Aturan, -Wakil): CF tertinggi; seri = derajat lebih berat, lalu ID.
+% wakil_komponen(+Aturan, -Wakil): penentu CF komponen.
+% CF tertinggi; seri = derajat lebih berat, lalu ID.
 wakil_komponen(Aturan, Wakil) :-
     map_list_to_pairs(kunci_aturan, Aturan, Berkunci),
     keysort(Berkunci, [_-Wakil|_]).
@@ -141,11 +146,30 @@ kunci_aturan(a(R, _, CF), k(Negatif, Urutan, Nomor)) :-
     atom_concat(r, Teks, R),
     atom_number(Teks, Nomor).
 
-% derajat_hasil(+Hasil, -Label, -IdAturan): derajat dari aturan ber-CF tertinggi.
+% derajat_hasil(+Hasil, -Label, -IdAturan): derajat paling berat dari semua aturan
+% terpicu. Jika derajat sama, pilih CF tertinggi, lalu ID.
 derajat_hasil(hasil(_, _, _, Aturan), Label, IdAturan) :-
-    findall(a(R, P, C), member(aturan(R, P, _, C, _), Aturan), Semua),
-    wakil_komponen(Semua, a(IdAturan, _, _)),
+    findall(k(U, N, No)-R,
+            ( member(aturan(R, P, _, C, _), Aturan),
+              kunci_aturan(a(R, P, C), k(N, U, No)) ),
+            Berkunci),
+    keysort(Berkunci, [_-IdAturan|_]),
     derajat_aturan(IdAturan, Label).
+
+% teks_derajat(+Hasil, -Derajat, -Sumber): teks tampilan untuk konsol dan web.
+% Sumber = '' jika aturan derajat juga termasuk aturan penentu CF.
+teks_derajat(Hasil, Derajat, Sumber) :-
+    Hasil = hasil(_, _, _, Aturan),
+    derajat_hasil(Hasil, Label, IdAturan),
+    upcase_atom(IdAturan, LabelAturan),
+    format(atom(Derajat), 'Derajat: ~w (berdasarkan aturan ~w)', [Label, LabelAturan]),
+    findall(R, member(aturan(R, _, _, _, dihitung), Aturan), Dihitung),
+    (   memberchk(IdAturan, Dihitung)
+    ->  Sumber = ''
+    ;   maplist([X, Y]>>upcase_atom(X, Y), Dihitung, LabelCF),
+        atomic_list_concat(LabelCF, ', ', TeksCF),
+        format(atom(Sumber), 'Keyakinan dari ~w, derajat dari ~w', [TeksCF, LabelAturan])
+    ).
 
 % Perbandingan seri tahan terhadap galat pembulatan floating point.
 bulat(CF, B) :-

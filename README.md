@@ -69,8 +69,8 @@ $ swipl -g run_tests -t halt tests/test_sistem.pl
 
 | ID | Diagnosis | Saran tindakan |
 |---|---|---|
-| D1 | Blas leher (neck blast), tingkat berat | Kehilangan hasil tinggi; segera aplikasikan fungisida sistemik dan konsultasikan dengan PPL/POPT |
-| D2 | Blas daun (leaf blast), tingkat sedang–berat | Kurangi pupuk N, aplikasikan fungisida, perbaiki jarak tanam |
+| D1 | Blas leher (neck blast) | Kehilangan hasil tinggi; segera aplikasikan fungisida sistemik dan konsultasikan dengan PPL/POPT |
+| D2 | Blas daun (leaf blast) | Kurangi pupuk N, aplikasikan fungisida, perbaiki jarak tanam |
 | D3 | Blas buku (node blast) | Aplikasikan fungisida dan pantau penyebaran ke malai |
 | D4 | Gejala awal blas / risiko tinggi | Pemantauan rutin, perbaiki drainase, gunakan varietas tahan |
 | D5 | Kemungkinan rendah blas | Gejala tidak cukup kuat, kemungkinan penyakit lain; konsultasikan dengan PPL |
@@ -110,7 +110,9 @@ CFgab    = CF1 + CF2 × (1 − CF1)
 
 **CF hanya ada pada level aturan.** Kolom CF gejala pada template bersifat opsional ("Jika Ada"). CF gejala tidak dipakai karena sebelumnya membuat bobot pakar dihitung ganda, di gejala dan di aturan, sehingga aturan yang lebih spesifik kalah.
 
-**Keyakinan berbeda dari derajat.** Persentase menunjukkan tingkat keyakinan sistem, bukan tingkat keparahan. Derajat berasal dari `derajat_aturan/2` pada aturan ber-CF tertinggi dan tampil sebagai "Derajat: <label> (berdasarkan aturan Rx)". Jika CF seri, derajat lebih berat dipilih (Berat > Sedang–Berat > Sedang > Awal > Risiko > Rendah), lalu ID aturan.
+**Keyakinan berbeda dari derajat.** Persentase menunjukkan tingkat keyakinan sistem, bukan tingkat keparahan. Derajat diagnosis adalah derajat paling berat di antara semua aturan terpicu (Berat > Sedang–Berat > Sedang > Awal > Risiko > Rendah) dan tampil sebagai "Derajat: <label> (berdasarkan aturan Rx)". Jika aturan derajat berbeda dari aturan penentu CF, sistem menampilkan keduanya, misalnya "Keyakinan dari R6, derajat dari R7".
+
+**Urutan diagnosis.** Diagnosis diurutkan dari CF tertinggi. Jika CF seri, derajat lebih berat tampil lebih dulu, lalu ID.
 
 **Penggabungan hanya untuk bukti independen.** Rumus kombinasi CF mengasumsikan bukti independen, sedangkan aturan yang berbagi gejala bukan bukti independen. Aturan terpicu dengan kesimpulan sama dikelompokkan menjadi komponen berdasarkan irisan premis secara transitif. Setiap komponen hanya menyumbang CF hasil tertinggi. Nilai antar-komponen, yang premisnya saling lepas, digabung dengan rumus di atas.
 
@@ -130,7 +132,7 @@ CFgab    = CF1 + CF2 × (1 − CF1)
 | C | G6, G7 | D3 90.00% | Sedang–Berat | R9 |
 | D | G11, G12 | D4 50.00% | Risiko | R11 |
 | E | tanpa gejala | tidak dapat menyimpulkan | – | – |
-| F | G1, G2, G3, G4, G8, G9, G10 | D1 95.00%, D2 95.00% (seri, urut ID) | Berat; Berat | R1; R5 |
+| F | G1, G2, G3, G4, G8, G9, G10 | D1 95.00%, D2 95.00% (CF dan derajat seri, urut ID) | Berat; Berat | R1; R5 |
 | G | G9 | D5 40.00% | Rendah | R19 |
 
 Rincian ada di [docs/hasil_uji.md](docs/hasil_uji.md). Penjelasan mekanisme ada di [docs/penjelasan_teknis.md](docs/penjelasan_teknis.md).
@@ -139,5 +141,4 @@ Rincian ada di [docs/hasil_uji.md](docs/hasil_uji.md). Penjelasan mekanisme ada 
 
 - Nilai CF masih draf dan daftar pustaka belum diisi.
 - Jawaban hanya Y atau T, sehingga CF hasil aturan yang terpicu sama dengan CF aturan.
-- Label derajat D2 dapat turun saat gejala bertambah, walaupun CF tidak turun. Contoh: G1, G2, G5 = Berat (R7, 80%), lalu dengan G3 = Sedang (R6, 90%).
-- Nama diagnosis dapat berbeda dengan derajat. Contoh: G8 saja tampil sebagai "tingkat berat" dengan Derajat Awal.
+- Label derajat masih draf dan perlu divalidasi dengan literatur atau pakar.

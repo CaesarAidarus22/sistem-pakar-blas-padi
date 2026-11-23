@@ -38,12 +38,15 @@ tampilkan_hasil([H|T], Faktor) :-
 tampilkan_diagnosis(No, Item) :-
     Item = hasil(D, _, Persen, Aturan),
     pisah_diagnosis(D, Nama, Saran),
-    derajat_hasil(Item, Derajat, IdAturan),
-    upcase_atom(IdAturan, LabelAturan),
+    teks_derajat(Item, Derajat, Sumber),
     teks_persen(Persen, Teks),
     upcase_atom(D, Label),
-    format('~w. [~w] ~w~n   Derajat: ~w (berdasarkan aturan ~w)~n   CF (keyakinan): ~s~n   Saran: ~w~n   Mengapa:~n',
-           [No, Label, Nama, Derajat, LabelAturan, Teks, Saran]),
+    format('~w. [~w] ~w~n   ~w~n', [No, Label, Nama, Derajat]),
+    (   Sumber == ''
+    ->  true
+    ;   format('   ~w~n', [Sumber])
+    ),
+    format('   CF (keyakinan): ~s~n   Saran: ~w~n   Mengapa:~n', [Teks, Saran]),
     forall(member(A, Aturan), tampilkan_aturan(A)).
 
 tampilkan_aturan(aturan(R, Premis, CFAturan, CFHasil, Status)) :-

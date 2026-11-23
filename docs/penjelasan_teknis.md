@@ -130,12 +130,14 @@ Tingkat prioritas disimpan pada `tingkat_diagnosis/2` di basis pengetahuan.
 
 ## 7. Keyakinan dan derajat
 
-CF dan derajat menjawab dua pertanyaan berbeda.
+CF dan derajat menjawab dua pertanyaan berbeda, sehingga sumbernya boleh berbeda.
 
-- **CF (keyakinan):** seberapa yakin sistem bahwa diagnosis itu benar berdasarkan gejala.
-- **Derajat:** seberapa berat kondisi menurut aturan yang menjadi dasar diagnosis.
+- **CF = keyakinan:** seberapa yakin sistem bahwa diagnosis itu benar berdasarkan gejala. Nilainya memakai CF tertinggi per komponen, lalu digabung antar-komponen.
+- **Derajat = keparahan:** seberapa berat kondisi yang ditunjukkan gejala. Nilainya adalah derajat paling berat di antara semua aturan terpicu untuk diagnosis itu.
 
-Derajat disimpan per aturan pada `derajat_aturan/2`. Label diagnosis diambil dari aturan terpicu dengan CF tertinggi. Jika CF seri, urutannya Berat > Sedang–Berat > Sedang > Awal > Risiko > Rendah, lalu ID aturan.
+Urutan derajat: Berat > Sedang–Berat > Sedang > Awal > Risiko > Rendah. Jika beberapa aturan memiliki derajat sama, sistem memilih CF tertinggi, lalu ID aturan.
+
+Satu gejala parah tidak boleh hilang hanya karena aturan lain lebih meyakinkan. Karena himpunan aturan terpicu hanya bertambah saat gejala ditambah, derajat tidak pernah turun. Pengujian brute force atas 4.096 kombinasi menunjukkan 0 pelanggaran.
 
 | Aturan | Derajat (draf) |
 |---|---|
@@ -149,15 +151,25 @@ Derajat disimpan per aturan pada `derajat_aturan/2`. Label diagnosis diambil dar
 | R11–R15 | Risiko |
 | R16–R21 | Rendah |
 
-Contoh: G8 saja menghasilkan D1 dengan keyakinan 55% dan "Derajat: Awal (berdasarkan aturan R4)". Konsol dan web juga menampilkan kalimat "Persentase menunjukkan tingkat keyakinan sistem, bukan tingkat keparahan."
+Contoh G1, G2, G3, G5 pada D2:
 
-## 8. Batasan sistem
+| Aspek | Aturan | Nilai |
+|---|---|---|
+| Keyakinan | R6 (CF tertinggi dalam komponen) | 90% |
+| Derajat | R7 (derajat paling berat) | Berat |
+
+Output menampilkan "Derajat: Berat (berdasarkan aturan R7)" dan "Keyakinan dari R6, derajat dari R7". Konsol dan web juga menampilkan kalimat "Persentase menunjukkan tingkat keyakinan sistem, bukan tingkat keparahan."
+
+## 8. Urutan diagnosis
+
+Diagnosis diurutkan dari CF tertinggi. Jika CF seri, derajat lebih berat tampil lebih dulu, lalu ID diagnosis. Contoh: G1, G5, G8, G10 menghasilkan D2 dan D1 sama-sama 80%. D2 tampil lebih dulu karena berderajat Berat, sedangkan D1 berderajat Sedang.
+
+## 9. Batasan sistem
 
 - Nilai CF masih draf dan belum tervalidasi literatur atau pakar.
 - Komponen hanya memakai CF tertinggi, sehingga gejala tambahan dalam komponen yang sama belum tentu menaikkan CF. Contoh: G1, G4, G5 tetap 80%.
 - Jawaban hanya Y atau T, sehingga CF hasil aturan yang terpicu sama dengan CF aturan.
-- Label derajat D2 dapat turun saat gejala bertambah, walaupun CF tidak turun. Contoh: G1, G2, G5 = Berat (R7, 80%), lalu dengan G3 = Sedang (R6, 90%). Ini terjadi pada 256 transisi.
-- Nama diagnosis dapat berbeda dengan derajat. Contoh: G8 saja tampil sebagai "tingkat berat" dengan Derajat Awal.
-- Urutan diagnosis mengikuti CF, bukan tingkat keparahan penyakit.
+- Label derajat masih draf dan perlu divalidasi dengan literatur atau pakar.
+- Urutan diagnosis mengutamakan CF. Derajat hanya menjadi penentu saat CF seri.
 - Sistem hanya mencakup blas padi dan tidak membedakan penyakit lain dengan gejala serupa.
 - Pengujian membuktikan konsistensi logika, bukan akurasi diagnosis di lapangan.

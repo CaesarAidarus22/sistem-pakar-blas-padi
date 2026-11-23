@@ -58,20 +58,41 @@ test(faktor_risiko_di_bawah_diagnosis_utama) :-
 test(faktor_risiko_tidak_muncul_pada_d4) :-
     uji([g11, g12], [hasil(d4, _, _, _)], []).
 
-test(derajat_dari_aturan_cf_tertinggi) :-
+test(derajat_paling_berat_dari_aturan_terpicu) :-
     forall(member(Gs-L-R, [[g8]-'Awal'-r4, [g8, g10]-'Sedang'-r3, [g8, g9]-'Berat'-r2,
-                           [g1, g5]-'Berat'-r7, [g6, g7]-'Sedang–Berat'-r9,
+                           [g1, g5]-'Berat'-r7, [g1, g2, g3, g5]-'Berat'-r7,
+                           [g1, g2, g3]-'Sedang'-r6, [g6, g7]-'Sedang–Berat'-r9,
                            [g11]-'Risiko'-r14, [g9]-'Rendah'-r19]),
            ( uji(Gs, [H], _), derajat_hasil(H, L, R) )).
+
+test(sumber_cf_dan_derajat_berbeda_ditampilkan) :-
+    uji([g1, g2, g3, g5], [H], _),
+    H = hasil(d2, CF, _, _),
+    abs(CF - 0.90) < 1.0e-9,
+    teks_derajat(H, 'Derajat: Berat (berdasarkan aturan R7)',
+                 'Keyakinan dari R6, derajat dari R7').
+
+test(sumber_sama_tidak_ditampilkan_ulang) :-
+    uji([g8, g9, g10], [H], _),
+    teks_derajat(H, 'Derajat: Berat (berdasarkan aturan R1)', '').
+
+test(nama_diagnosis_tanpa_tingkat) :-
+    pisah_diagnosis(d1, 'Blas leher (neck blast)', _),
+    pisah_diagnosis(d2, 'Blas daun (leaf blast)', _).
 
 test(setiap_aturan_punya_derajat) :-
     forall(premis(R, _), ( derajat_aturan(R, L), urutan_derajat(L, _) )).
 
-test(seri_urut_id) :-
-    Hasil = [hasil(d2, 0.5, 50.0, []), hasil(d1, 0.5, 50.0, [])],
-    map_list_to_pairs(kunci_urut, Hasil, K),
-    keysort(K, S),
-    pairs_values(S, [hasil(d1, _, _, _), hasil(d2, _, _, _)]).
+test(seri_cf_derajat_lebih_berat_dulu) :-
+    uji([g1, g5, g8, g10], [H1, H2], _),
+    H1 = hasil(d2, CF1, _, _),
+    H2 = hasil(d1, CF2, _, _),
+    abs(CF1 - CF2) < 1.0e-9,
+    derajat_hasil(H1, 'Berat', r7),
+    derajat_hasil(H2, 'Sedang', r3).
+
+test(seri_cf_dan_derajat_urut_id) :-
+    uji([g1, g2, g3, g4, g8, g9, g10], [hasil(d1, _, _, _), hasil(d2, _, _, _)], _).
 
 :- end_tests(skenario).
 
@@ -161,6 +182,18 @@ test(d5_tidak_bersama_d1_d4) :-
     forall(member(V, Vs),
            \+ ( memberchk(d5-_, V), member(D-_, V), memberchk(D, [d1, d2, d3, d4]) )).
 
+test(derajat_tidak_turun_saat_gejala_ditambah) :-
+    semua_gejala(Gs),
+    findall(M-R, ( between(0, 4095, M), gejala_mask(M, Gs, T), uji(T, H, _),
+                   findall(D-U, ( member(X, H), X = hasil(D, _, _, _),
+                                  derajat_hasil(X, L, _), urutan_derajat(L, U) ), R) ),
+            Baris),
+    list_to_assoc(Baris, Tabel),
+    findall(M-I-D, ( between(0, 4095, M), between(0, 11, I), M /\ (1 << I) =:= 0,
+                     M2 is M \/ (1 << I),
+                     get_assoc(M, Tabel, A), get_assoc(M2, Tabel, B),
+                     member(D-U1, A), memberchk(D-U2, B), U2 > U1 ), []).
+
 test(tidak_ada_aturan_mati) :-
     semua_gejala(Gs),
     findall(R, ( between(0, 4095, M), gejala_mask(M, Gs, T), uji(T, H, _),
@@ -195,6 +228,14 @@ test(derajat_dan_catatan_di_api) :-
     X.derajat_aturan == "R4",
     catatan_cf(C),
     atom_string(C, Balas.catatan).
+
+test(sumber_di_api) :-
+    nb_getval(port_uji, Port),
+    format(atom(Url), 'http://localhost:~w/api/diagnosa', [Port]),
+    http_post(Url, json(_{g1: "y", g2: "y", g3: "y", g5: "y"}), Balas, [json_object(dict)]),
+    [X] = Balas.diagnosis,
+    X.teks_derajat == "Derajat: Berat (berdasarkan aturan R7)",
+    X.sumber == "Keyakinan dari R6, derajat dari R7".
 
 test(input_tidak_valid_ditolak) :-
     nb_getval(port_uji, Port),

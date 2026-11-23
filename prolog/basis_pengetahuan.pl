@@ -49,8 +49,8 @@ cf_jawaban(y, 1.0).
 % DIAGNOSIS: diagnosis(IdDiagnosis, 'Nama — saran tindakan')
 % ---------------------------------------------------------------------
 
-diagnosis(d1, 'Blas leher (neck blast), tingkat berat — kehilangan hasil tinggi; segera aplikasikan fungisida sistemik dan konsultasikan dengan PPL/POPT').
-diagnosis(d2, 'Blas daun (leaf blast), tingkat sedang–berat — kurangi pupuk N, aplikasikan fungisida, perbaiki jarak tanam').
+diagnosis(d1, 'Blas leher (neck blast) — kehilangan hasil tinggi; segera aplikasikan fungisida sistemik dan konsultasikan dengan PPL/POPT').
+diagnosis(d2, 'Blas daun (leaf blast) — kurangi pupuk N, aplikasikan fungisida, perbaiki jarak tanam').
 diagnosis(d3, 'Blas buku (node blast) — aplikasikan fungisida dan pantau penyebaran ke malai').
 diagnosis(d4, 'Gejala awal blas / risiko tinggi — pemantauan rutin, perbaiki drainase, gunakan varietas tahan').
 diagnosis(d5, 'Kemungkinan rendah blas — gejala tidak cukup kuat, kemungkinan penyakit lain; konsultasikan dengan PPL').
@@ -62,7 +62,7 @@ tingkat_diagnosis(d3, 1).
 tingkat_diagnosis(d4, 2).
 tingkat_diagnosis(d5, 3).
 
-% Derajat per aturan. Label diagnosis diambil dari aturan ber-CF tertinggi.
+% Derajat per aturan. Derajat diagnosis = derajat paling berat dari aturan terpicu.
 derajat_aturan(r1, 'Berat'). % TODO: validasi literatur
 derajat_aturan(r2, 'Berat'). % TODO: validasi literatur
 derajat_aturan(r3, 'Sedang'). % TODO: validasi literatur

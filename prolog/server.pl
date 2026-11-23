@@ -59,12 +59,18 @@ json_gejala(G, _{id: G, label: Label, deskripsi: Deskripsi}) :-
 json_hasil(Item,
            _{id: D, label: Label, nama: Nama, saran: Saran,
              derajat: Derajat, derajat_aturan: LabelAturan,
+             teks_derajat: TeksDerajat, sumber: SumberJson,
              cf_persen: Persen, cf_teks: Teks, aturan: AturanJson}) :-
     Item = hasil(D, _, Persen, Aturan),
     upcase_atom(D, Label),
     pisah_diagnosis(D, Nama, Saran),
     derajat_hasil(Item, Derajat, IdAturan),
     upcase_atom(IdAturan, LabelAturan),
+    teks_derajat(Item, TeksDerajat, Sumber),
+    (   Sumber == ''
+    ->  SumberJson = null
+    ;   SumberJson = Sumber
+    ),
     teks_persen(Persen, Teks),
     maplist(json_aturan, Aturan, AturanJson).
 

@@ -80,7 +80,8 @@ function kartuDiagnosis(d, utama) {
   const judul = el("div", "judul-hasil");
   judul.append(el(utama ? "h2" : "h3", "", `${d.label}: ${d.nama}`), el("span", "angka", d.cf_teks));
   const meta = el("p", "meta");
-  meta.append(el("span", "derajat", `Derajat: ${d.derajat} (berdasarkan aturan ${d.derajat_aturan})`), el("span", "", `Keyakinan sistem: ${d.cf_teks}`));
+  meta.append(el("span", "derajat", d.teks_derajat), el("span", "", `Keyakinan sistem: ${d.cf_teks}`));
+  if (d.sumber) meta.append(el("span", "", d.sumber));
   const bar = el("progress");
   bar.max = 100;
   bar.value = d.cf_persen;
