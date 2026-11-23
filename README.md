@@ -11,7 +11,7 @@ prolog/basis_pengetahuan.pl   fakta gejala, diagnosis, aturan, nilai CF (file ya
 prolog/mesin_inferensi.pl     backward chaining, CF, komponen bukti, prioritas diagnosis
 prolog/konsol.pl              antarmuka konsol
 prolog/server.pl              web server dan API, port 8080
-web/                          index.html, style.css, app.js, favicon.svg (hanya tampilan)
+web/                          index.html, style.css, app.js, favicon.svg, assets/ (hanya tampilan)
 tests/test_sistem.pl          unit test plunit
 docs/hasil_uji.md             tabel hasil pengujian
 docs/penjelasan_teknis.md     bahan Bab III dan IV
@@ -193,6 +193,10 @@ Assertion failed: (0), function raiseStackOverflow, file pl-alloc.c, line 759.
 Masalah yang sama muncul pada server minimal di luar project ini. Sebagai workaround, `sajikan_web/1` di `prolog/server.pl` membuang header tersebut sebelum memanggil `http_reply_from_files/3`. Akibatnya, file statis selalu dikirim penuh dengan status 200 dan tidak memakai balasan 304. Test `refresh_if_modified_since_server_tetap_hidup` menjaga perilaku ini.
 
 **Balasan 404 pada SWI-Prolog 11.0.0 (sudah ditangani).** Opsi `not_found(404)` pada `http_reply_from_files/3` dapat menyebabkan segmentation fault. Karena itu, `sajikan_web/1` membalas 404 secara langsung dalam format JSON. Test `file_tidak_ada_404_server_tetap_hidup` menjaga perilaku ini.
+
+## Kredit gambar
+
+Foto latar: [Rice fields on Flores Island in West Manggarai Regency, Indonesia](https://commons.wikimedia.org/wiki/File:Rice_fields_on_Flores_Island_in_West_Manggarai_Regency,_Indonesia,_20250824_1359_3199.jpg) oleh Jakub Hałun, dari Wikimedia Commons, berlisensi [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Foto diubah ukurannya, dikompresi ke WebP, dan diburamkan saat ditampilkan.
 
 ## Daftar pustaka
 

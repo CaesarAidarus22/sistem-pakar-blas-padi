@@ -252,13 +252,60 @@ details > summary { cursor: pointer; font-weight: 700; color: var(--hijau-800); 
   .ringkasan-teks { width: 100%; }
 }
 
+/* Background foto: fallback solid dipakai jika efek kaca tidak didukung */
+html { background: #dfe8d6; }
+body { background: transparent; isolation: isolate; }
+body::before, body::after { content: ""; position: fixed; inset: 0; pointer-events: none; }
+body::before {
+  z-index: -2;
+  background: #5f7f55 url("assets/padi-1920.webp") center / cover no-repeat;
+  filter: blur(10px);
+  transform: scale(1.06);
+}
+body::after {
+  z-index: -1;
+  background: linear-gradient(170deg, rgb(15 58 34 / .68), rgb(43 96 58 / .42) 48%, rgb(247 241 220 / .66));
+}
+.judul-halaman, .kaki, .lain-daftar > h2, .error, .kredit {
+  background: var(--kartu);
+  border: 1px solid var(--garis);
+  border-radius: var(--radius);
+  box-shadow: var(--bayangan);
+}
+.judul-halaman { padding: var(--s-3) var(--s-4); }
+.kaki { width: min(calc(100% - 2 * var(--s-4)), 1128px); margin-bottom: var(--s-4); padding: var(--s-2) var(--s-4); }
+.lain-daftar > h2 { padding: var(--s-2) var(--s-3); }
+.error { padding: var(--s-2) var(--s-3); }
+.kredit { max-width: 820px; margin-top: var(--s-4); padding: var(--s-2) var(--s-4); color: var(--redup); font-size: var(--teks-kecil); }
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .kartu, .organ, .judul-halaman, .kaki, .lain-daftar > h2, .error, .kredit, .hero, .ringkasan, .bilah-aksi {
+    -webkit-backdrop-filter: blur(14px) saturate(1.15);
+    backdrop-filter: blur(14px) saturate(1.15);
+  }
+  .kartu, .organ, .judul-halaman, .kaki, .lain-daftar > h2, .error, .kredit { background: rgb(255 255 255 / .86); }
+  .hero { background: linear-gradient(120deg, rgb(232 245 232 / .88), rgb(253 247 227 / .88)); }
+  .ringkasan { background: linear-gradient(120deg, rgb(255 255 255 / .9) 40%, rgb(233 246 234 / .88)); }
+  .bilah-aksi { background: rgb(255 255 255 / .93); }
+  .organ-kepala { background: rgb(240 248 241 / .72); }
+  .gejala:has(input[value="y"]:checked) { background: rgb(226 243 230 / .92); }
+}
+
+@media (max-width: 768px) {
+  body::before { background-image: url("assets/padi-960.webp"); filter: blur(8px); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
 }
 
 @media print {
   @page { size: A4; margin: 15mm; }
-  html, body { background: #fff; min-height: 0; }
+  html, body { background: #fff !important; min-height: 0; }
+  body::before, body::after { display: none !important; content: none !important; }
+  * { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+  .judul-halaman, .kartu, .ringkasan, .lain-daftar > h2 { background: #fff !important; }
+  .judul-halaman, .lain-daftar > h2 { border-width: 0 0 2px; border-radius: 0; box-shadow: none; padding-inline: 0; }
   body { display: block; font-size: 11pt; color: #000; }
   .kepala, .kaki, nav, #aksi-hasil, .bilah-aksi, #diagnosis, #tentang { display: none !important; }
   .wrap { width: 100%; padding: 0; }
