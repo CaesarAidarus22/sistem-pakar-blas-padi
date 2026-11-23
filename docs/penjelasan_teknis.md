@@ -181,3 +181,66 @@ Diagnosis diurutkan dari CF tertinggi. Jika CF seri, derajat lebih berat tampil 
 - Urutan diagnosis mengutamakan CF. Derajat hanya menjadi penentu saat CF seri.
 - Sistem hanya mencakup blas padi dan tidak membedakan penyakit lain dengan gejala serupa.
 - Pengujian membuktikan konsistensi logika, bukan akurasi diagnosis di lapangan.
+
+## 10. Tabel validasi sumber
+
+Kolom Sumber diisi kelompok setelah validasi. Contoh isian: `Semangun, 2008, hlm. ..`.
+
+### Gejala
+
+| ID | Gejala | Sumber |
+|---|---|---|
+| G1 | Bercak belah ketupat (lonjong, ujung runcing) pada daun | |
+| G2 | Pusat bercak abu-abu atau keputihan | |
+| G3 | Tepi bercak cokelat kemerahan | |
+| G4 | Bercak menyatu sehingga daun mengering | |
+| G5 | Bibit atau anakan layu dan mati | |
+| G6 | Buku batang cokelat kehitaman | |
+| G7 | Batang mudah patah pada bagian buku | |
+| G8 | Leher malai cokelat kehitaman (busuk leher) | |
+| G9 | Malai patah atau terkulai | |
+| G10 | Gabah hampa atau pengisian tidak sempurna | |
+| G11 | Lingkungan lembap, berembun, atau sering hujan | |
+| G12 | Pemupukan nitrogen (urea) berlebihan | |
+
+### Aturan
+
+| ID | Premis | Kesimpulan | CF aturan | Derajat | Sumber |
+|---|---|---|---:|---|---|
+| R1 | G8, G9, G10 | D1 | 0.95 | Berat | |
+| R2 | G8, G9 | D1 | 0.90 | Berat | |
+| R3 | G8, G10 | D1 | 0.80 | Sedang | |
+| R4 | G8 | D1 | 0.55 | Awal | |
+| R5 | G1, G2, G3, G4 | D2 | 0.95 | Berat | |
+| R6 | G1, G2, G3 | D2 | 0.90 | Sedang | |
+| R7 | G1, G5 | D2 | 0.80 | Berat | |
+| R8 | G1, G4 | D2 | 0.75 | Sedang | |
+| R9 | G6, G7 | D3 | 0.90 | Sedang–Berat | |
+| R10 | G6 | D3 | 0.60 | Awal | |
+| R11 | G11, G12 | D4 | 0.50 | Risiko | |
+| R12 | G1 | D4 | 0.30 | Risiko | |
+| R13 | G2, G3 | D4 | 0.30 | Risiko | |
+| R14 | G11 | D4 | 0.40 | Risiko | |
+| R15 | G12 | D4 | 0.40 | Risiko | |
+| R16 | G4 | D5 | 0.30 | Rendah | |
+| R17 | G5 | D5 | 0.30 | Rendah | |
+| R18 | G7 | D5 | 0.40 | Rendah | |
+| R19 | G9 | D5 | 0.40 | Rendah | |
+| R20 | G10 | D5 | 0.35 | Rendah | |
+| R21 | G9, G10 | D5 | 0.50 | Rendah | |
+
+## 11. Daftar pustaka
+
+Almahdi, B., Riansyah, A., & Kurniadi, D. (2024). Pengembangan sistem pakar diagnosa penyakit tanaman padi varietas Inpari 32 di daerah Demak dengan metode certainty factor. *Prosiding Konferensi Ilmiah Mahasiswa Unissula (KIMU)*. Universitas Islam Sultan Agung.
+
+Bratko, I. (2012). *Prolog programming for artificial intelligence* (4th ed.). Pearson Education.
+
+Giarratano, J. C., & Riley, G. D. (2005). *Expert systems: Principles and programming* (4th ed.). Thomson Course Technology.
+
+Semangun, H. (2008). *Penyakit-penyakit tanaman pangan di Indonesia* (Ed. 2). Gadjah Mada University Press.
+
+Shortliffe, E. H., & Buchanan, B. G. (1975). A model of inexact reasoning in medicine. *Mathematical Biosciences*, *23*(3–4), 351–379.
+
+Sudir, Nasution, A., Santoso, & Nuryanto, B. (2014). Penyakit blas *Pyricularia grisea* pada tanaman padi dan strategi pengendaliannya. *Iptek Tanaman Pangan*, *9*(2).
+
+Yulianto. (2017). Pengendalian penyakit blas secara terpadu pada tanaman padi. *Iptek Tanaman Pangan*, *12*(1).

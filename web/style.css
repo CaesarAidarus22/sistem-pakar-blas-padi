@@ -90,7 +90,8 @@ nav a.aktif { background: #fff; color: var(--hijau-800); font-weight: 650; }
 }
 .prosa { display: grid; gap: var(--s-4); max-width: 820px; }
 .prosa .kartu { display: grid; gap: var(--s-3); padding: var(--s-5); }
-.prosa ol { margin: 0; padding-left: var(--s-5); }
+.pustaka { display: grid; gap: var(--s-2); }
+.pustaka p { padding-left: 2em; text-indent: -2em; overflow-wrap: anywhere; }
 .note { background: var(--padi-50); border-left: 4px solid var(--padi); border-radius: 4px; padding: var(--s-2) var(--s-3); font-size: var(--teks-sedang); }
 .error { color: var(--galat); font-weight: 600; margin-bottom: var(--s-3); }
 

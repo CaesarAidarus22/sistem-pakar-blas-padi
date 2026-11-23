@@ -178,7 +178,7 @@ Rincian ada di [docs/hasil_uji.md](docs/hasil_uji.md). Penjelasan mekanisme ada 
 
 ## Batasan
 
-- Nilai CF masih draf dan daftar pustaka belum diisi.
+- Nilai CF masih draf.
 - Jawaban hanya Y atau T, sehingga CF hasil aturan yang terpicu sama dengan CF aturan.
 - Label derajat dan saran masih draf dan perlu divalidasi dengan literatur atau pakar.
 
@@ -193,3 +193,19 @@ Assertion failed: (0), function raiseStackOverflow, file pl-alloc.c, line 759.
 Masalah yang sama muncul pada server minimal di luar project ini. Sebagai workaround, `sajikan_web/1` di `prolog/server.pl` membuang header tersebut sebelum memanggil `http_reply_from_files/3`. Akibatnya, file statis selalu dikirim penuh dengan status 200 dan tidak memakai balasan 304. Test `refresh_if_modified_since_server_tetap_hidup` menjaga perilaku ini.
 
 **Balasan 404 pada SWI-Prolog 11.0.0 (sudah ditangani).** Opsi `not_found(404)` pada `http_reply_from_files/3` dapat menyebabkan segmentation fault. Karena itu, `sajikan_web/1` membalas 404 secara langsung dalam format JSON. Test `file_tidak_ada_404_server_tetap_hidup` menjaga perilaku ini.
+
+## Daftar pustaka
+
+Almahdi, B., Riansyah, A., & Kurniadi, D. (2024). Pengembangan sistem pakar diagnosa penyakit tanaman padi varietas Inpari 32 di daerah Demak dengan metode certainty factor. *Prosiding Konferensi Ilmiah Mahasiswa Unissula (KIMU)*. Universitas Islam Sultan Agung.
+
+Bratko, I. (2012). *Prolog programming for artificial intelligence* (4th ed.). Pearson Education.
+
+Giarratano, J. C., & Riley, G. D. (2005). *Expert systems: Principles and programming* (4th ed.). Thomson Course Technology.
+
+Semangun, H. (2008). *Penyakit-penyakit tanaman pangan di Indonesia* (Ed. 2). Gadjah Mada University Press.
+
+Shortliffe, E. H., & Buchanan, B. G. (1975). A model of inexact reasoning in medicine. *Mathematical Biosciences*, *23*(3–4), 351–379.
+
+Sudir, Nasution, A., Santoso, & Nuryanto, B. (2014). Penyakit blas *Pyricularia grisea* pada tanaman padi dan strategi pengendaliannya. *Iptek Tanaman Pangan*, *9*(2).
+
+Yulianto. (2017). Pengendalian penyakit blas secara terpadu pada tanaman padi. *Iptek Tanaman Pangan*, *12*(1).
