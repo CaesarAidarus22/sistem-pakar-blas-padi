@@ -231,6 +231,8 @@ Kolom Sumber diisi kelompok setelah validasi. Contoh isian: `Semangun, 2008, hlm
 
 ## 11. Daftar pustaka
 
+*Pyricularia grisea* adalah nama yang dipakai literatur lama untuk patogen blas padi; nama yang kini digunakan adalah *Pyricularia oryzae* (teleomorf *Magnaporthe oryzae*).
+
 Almahdi, B., Riansyah, A., & Kurniadi, D. (2024). Pengembangan sistem pakar diagnosa penyakit tanaman padi varietas Inpari 32 di daerah Demak dengan metode certainty factor. *Prosiding Konferensi Ilmiah Mahasiswa Unissula (KIMU)*. Universitas Islam Sultan Agung.
 
 Bratko, I. (2012). *Prolog programming for artificial intelligence* (4th ed.). Pearson Education.
