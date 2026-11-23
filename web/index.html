@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sistem Pakar Blas Padi</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="wrap bar">
+      <a class="brand" href="#diagnosis">Sistem Pakar Blas Padi</a>
+      <nav aria-label="Navigasi utama">
+        <a href="#diagnosis">Diagnosis</a>
+        <a href="#hasil">Hasil</a>
+        <a href="#tentang">Tentang</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="diagnosis" class="page">
+      <h1>Diagnosa dini penyakit blas</h1>
+      <p class="lead">Pilih Ya untuk setiap gejala yang terlihat di lahan, lalu tekan Diagnosa.</p>
+      <form id="form-gejala">
+        <div id="daftar-gejala"><p>Memuat gejala…</p></div>
+        <p id="galat" class="error" role="alert" hidden></p>
+        <div class="actions">
+          <button type="submit" class="primary">Diagnosa</button>
+          <button type="reset">Reset</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="hasil" class="page" aria-live="polite">
+      <h1>Hasil diagnosis</h1>
+      <div id="isi-hasil"><p>Belum ada hasil. Isi gejala di halaman <a href="#diagnosis">Diagnosis</a>.</p></div>
+    </section>
+
+    <section id="tentang" class="page">
+      <h1>Tentang sistem</h1>
+      <h2>Penyakit blas</h2>
+      <p>Blas adalah penyakit padi yang disebabkan jamur <em>Pyricularia oryzae</em>. Sistem ini membedakan gejala pada daun, buku batang, dan leher malai.</p>
+      <h2>Metode</h2>
+      <p><strong>Backward chaining</strong> menguji setiap kemungkinan diagnosis melalui aturan <code>menyebabkan/2</code>. Prolog memakai backtracking untuk mencoba aturan alternatif.</p>
+      <p><strong>Certainty Factor</strong> menyatakan tingkat keyakinan. CF premis adalah nilai minimum CF gejala, lalu dikalikan CF aturan. Pada rantai aturan yang premisnya subset, hanya CF tertinggi yang dihitung. Aturan yang tersisa digabung dengan <code>CF1 + CF2 × (1 − CF1)</code>.</p>
+      <p class="note">Nilai CF masih draf dan perlu divalidasi dengan literatur atau pakar. Hasil sistem bukan pengganti pemeriksaan PPL/POPT.</p>
+      <h2>Daftar pustaka</h2>
+      <ol>
+        <li>[PERLU DIISI KELOMPOK]</li>
+        <li>[PERLU DIISI KELOMPOK]</li>
+        <li>[PERLU DIISI KELOMPOK]</li>
+      </ol>
+    </section>
+  </main>
+
+  <footer class="wrap">Tugas 2 Kecerdasan Artifisial (MMAI1001)</footer>
+  <script src="app.js"></script>
+</body>
+</html>
